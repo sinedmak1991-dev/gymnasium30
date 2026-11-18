@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #163A2E;
+  --color-forest-light: #1E4D3D;
+  --color-forest-dark: #0E261E;
+  --color-forest-50: #F0F5F3;
+  --color-forest-100: #D9E6E1;
+
+  --color-gold: #E2B857;
+  --color-gold-light: #EDD089;
+  --color-gold-dark: #C59B3B;
+  --color-gold-50: #FCF8EE;
+
+  --color-offwhite: #F8F9F5;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+.hero-pattern {
+  background-color: #163A2E;
+  background-image:
+    radial-gradient(rgba(226, 184, 87, 0.12) 1px, transparent 1px),
+    radial-gradient(rgba(226, 184, 87, 0.08) 1px, #163A2E 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}

@@ -6,6 +6,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    base: '/gymnasium30/',
     plugins: [
       react(),
       tailwindcss(),

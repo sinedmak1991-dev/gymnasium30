@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Camera, Maximize2 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Camera, ChevronDown, ChevronUp, Maximize2 } from 'lucide-react';
 import type { GalleryCategory, GalleryItem } from '../types/school';
 import { SafeImage } from './SafeImage';
 
@@ -8,6 +8,8 @@ interface GallerySectionProps {
   isLoading?: boolean;
   onOpenLightbox: (itemId: number) => void;
 }
+
+const INITIAL_VISIBLE_PHOTOS = 3;
 
 const GALLERY_FILTERS: { id: GalleryCategory; label: string }[] = [
   { id: 'all', label: 'Усі фото' },
@@ -22,14 +24,38 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onOpenLightbox,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<GalleryCategory>('all');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const filteredItems =
     selectedCategory === 'all'
       ? items
       : items.filter((item) => item.category === selectedCategory);
 
+  const hasMoreItems = filteredItems.length > INITIAL_VISIBLE_PHOTOS;
+  const visibleItems =
+    isExpanded || !hasMoreItems ? filteredItems : filteredItems.slice(0, INITIAL_VISIBLE_PHOTOS);
+
+  const handleCategoryChange = (category: GalleryCategory) => {
+    setSelectedCategory(category);
+    setIsExpanded(false);
+  };
+
+  const handleToggleExpand = () => {
+    if (isExpanded) {
+      setIsExpanded(false);
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      setIsExpanded(true);
+    }
+  };
+
   return (
-    <section id="gallery" className="py-16 sm:py-20 bg-offwhite border-t border-slate-200/70">
+    <section
+      id="gallery"
+      ref={sectionRef}
+      className="py-16 sm:py-20 bg-offwhite border-t border-slate-200/70 scroll-mt-24"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
@@ -52,7 +78,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 <button
                   key={filter.id}
                   type="button"
-                  onClick={() => setSelectedCategory(filter.id)}
+                  onClick={() => handleCategoryChange(filter.id)}
                   className={`px-4 py-1.5 rounded-full text-xs sm:text-sm transition cursor-pointer ${
                     isActive
                       ? 'font-semibold bg-forest text-white'
@@ -82,12 +108,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
               <Camera className="w-7 h-7" />
             </div>
             <p className="text-slate-700 font-medium text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-              Фотогалерея оновлюється. Незабаром тут з&apos;являться світлини з життя нашої гімназії
+              Фотогалерея оновлюється. Незабаром тут з&apos;являться світлини з життя нашої
+              гімназії
             </p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {filteredItems.map((item) => (
+            {visibleItems.map((item) => (
               <button
                 key={item.id}
                 type="button"
@@ -121,6 +148,30 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 </div>
               </button>
             ))}
+          </div>
+        )}
+
+        {/* Кнопка розгортання / згортання фотогалереї */}
+        {!isLoading && hasMoreItems && (
+          <div className="mt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={handleToggleExpand}
+              aria-expanded={isExpanded}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#163A2E] hover:bg-[#1E4D3D] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+            >
+              {isExpanded ? (
+                <>
+                  <span>Згорнути</span>
+                  <ChevronUp className="w-4 h-4 text-gold shrink-0" />
+                </>
+              ) : (
+                <>
+                  <span>Показати всі фото ({filteredItems.length})</span>
+                  <ChevronDown className="w-4 h-4 text-gold shrink-0" />
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>

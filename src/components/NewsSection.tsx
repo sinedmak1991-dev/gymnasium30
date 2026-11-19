@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowRight, Calendar, Newspaper, Paperclip } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { ArrowRight, Calendar, ChevronDown, ChevronUp, Newspaper, Paperclip } from 'lucide-react';
 import type { NewsItem } from '../types/school';
 import { SafeImage } from './SafeImage';
 
@@ -9,13 +9,35 @@ interface NewsSectionProps {
   onOpenNews: (id: number) => void;
 }
 
+const INITIAL_VISIBLE_NEWS = 3;
+
 export const NewsSection: React.FC<NewsSectionProps> = ({
   news,
   isLoading = false,
   onOpenNews,
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const hasMoreNews = news.length > INITIAL_VISIBLE_NEWS;
+  const visibleNews =
+    isExpanded || !hasMoreNews ? news : news.slice(0, INITIAL_VISIBLE_NEWS);
+
+  const handleToggleExpand = () => {
+    if (isExpanded) {
+      setIsExpanded(false);
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      setIsExpanded(true);
+    }
+  };
+
   return (
-    <section id="news" className="py-16 sm:py-20 bg-white border-y border-slate-200/70">
+    <section
+      id="news"
+      ref={sectionRef}
+      className="py-16 sm:py-20 bg-white border-y border-slate-200/70 scroll-mt-24"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">
@@ -56,7 +78,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-            {news.map((item) => {
+            {visibleNews.map((item) => {
               const hasImage = Boolean(item.image && item.image.trim() !== '');
               const fileCount = item.files?.length ?? 0;
               return (
@@ -113,6 +135,30 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
                 </article>
               );
             })}
+          </div>
+        )}
+
+        {/* Кнопка розгортання / згортання новин */}
+        {!isLoading && hasMoreNews && (
+          <div className="mt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={handleToggleExpand}
+              aria-expanded={isExpanded}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#163A2E] hover:bg-[#1E4D3D] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+            >
+              {isExpanded ? (
+                <>
+                  <span>Згорнути</span>
+                  <ChevronUp className="w-4 h-4 text-gold shrink-0" />
+                </>
+              ) : (
+                <>
+                  <span>Показати всі новини ({news.length})</span>
+                  <ChevronDown className="w-4 h-4 text-gold shrink-0" />
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>

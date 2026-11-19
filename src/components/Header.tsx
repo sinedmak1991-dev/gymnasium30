@@ -11,24 +11,27 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between gap-3 lg:gap-4 h-20">
           {/* Логотип та офіційна назва */}
-          <a href="#top" className="flex items-center gap-3 group focus:outline-none shrink-0">
+          <a
+            href="#top"
+            className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none min-w-0 shrink-0"
+          >
             <div className="w-12 h-14 sm:w-14 sm:h-16 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
               <CrestLogo variant="header" className="w-full h-full drop-shadow-sm" />
             </div>
-            <div>
+            <div className="min-w-0">
               <span className="block font-heading font-extrabold text-forest text-lg sm:text-xl leading-tight tracking-tight whitespace-nowrap">
                 {SCHOOL_INFO.shortName}
               </span>
-              <span className="block text-xs text-slate-500 font-medium tracking-wide uppercase mt-0.5 whitespace-nowrap">
+              <span className="block text-[10px] sm:text-[11px] lg:text-[10px] xl:text-[11px] leading-tight text-slate-500 font-medium tracking-[0.025em] uppercase mt-0.5 max-w-[175px] sm:max-w-none">
                 {SCHOOL_INFO.cityLabel}
               </span>
             </div>
           </a>
 
           {/* Десктопне меню */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-6 text-[13px] xl:text-sm font-medium text-slate-700">
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 text-[13px] xl:text-sm font-medium text-slate-700">
             <a
               href="#top"
               className="text-forest font-semibold hover:text-gold-dark transition whitespace-nowrap shrink-0"

@@ -13,7 +13,7 @@ export const DEFAULT_SOB_INSPECTOR: SobInspectorInfo = {
 
 export const SCHOOL_INFO = {
   shortName: 'ГІМНАЗІЯ № 30',
-  cityLabel: 'ХМЕЛЬНИЦЬКИЙ',
+  cityLabel: 'ХМЕЛЬНИЦЬКОЇ МІСЬКОЇ РАДИ',
   fullName: 'КЗЗСО «Гімназія № 30 Хмельницької міської ради»',
   topAddress: 'м. Хмельницький, вул. Заводська, 33',
   topPhone: '(0382) 65-62-02',

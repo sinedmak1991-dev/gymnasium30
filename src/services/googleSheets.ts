@@ -274,20 +274,31 @@ function mapNewsRows(rows: SheetRow[]): NewsItem[] {
 
 function mapGalleryRows(rows: SheetRow[]): GalleryItem[] {
   return rows
-    .filter((row) => isTruthyFlag(row['Опубліковано']))
-    .map((row, index) => {
+    .map((row, index) => ({ row, index }))
+    .filter(({ row }) => isTruthyFlag(row['Опубліковано']))
+    .map(({ row, index }) => {
       const image = normalizePhotoUrl(row['Фото_URL']);
       const category = normalizeGalleryCategory(row['Категорія']);
       return {
-        id: parseNumericId(row['ID'], index + 1),
-        category,
-        categoryLabel: row['Назва_категорії'] || defaultGalleryCategoryLabel(category),
-        title: row['Заголовок'] || 'Життя гімназії',
-        description: row['Опис'] || '',
-        image,
-      } satisfies GalleryItem;
+        item: {
+          id: parseNumericId(row['ID'], index + 1),
+          category,
+          categoryLabel: row['Назва_категорії'] || defaultGalleryCategoryLabel(category),
+          title: row['Заголовок'] || 'Життя гімназії',
+          description: row['Опис'] || '',
+          image,
+        } satisfies GalleryItem,
+        timestamp: parseDateTimestamp(row['Дата'] || ''),
+        rowIndex: index,
+      };
     })
-    .filter((item) => item.image !== '');
+    .filter(({ item }) => item.image !== '')
+    .sort((a, b) => {
+      if (b.timestamp !== a.timestamp) return b.timestamp - a.timestamp;
+      if (b.item.id !== a.item.id) return b.item.id - a.item.id;
+      return b.rowIndex - a.rowIndex;
+    })
+    .map(({ item }) => item);
 }
 
 function mapTeamRows(rows: SheetRow[]): TeamMember[] {

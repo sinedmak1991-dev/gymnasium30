@@ -127,9 +127,25 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
-          <div>© 2026 {SCHOOL_INFO.fullName}. Усі права захищено.</div>
-          <div className="flex items-center gap-4">
+        <div className="pt-8 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs text-white/60">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-1.5 sm:gap-x-3 sm:gap-y-1 text-center md:text-left">
+            <span>© 2026 {SCHOOL_INFO.fullName}. Усі права захищено.</span>
+            <span className="hidden sm:inline text-white/25" aria-hidden="true">
+              •
+            </span>
+            <span>
+              Хостинг та домен надано компанією{' '}
+              <a
+                href="https://cityhost.ua"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-gold transition underline decoration-white/25 hover:decoration-gold underline-offset-2"
+              >
+                CityHost
+              </a>
+            </span>
+          </div>
+          <div className="flex items-center justify-center md:justify-end gap-4 shrink-0">
             <a
               href={SCHOOL_INFO.facebookUrl}
               target="_blank"

@@ -343,10 +343,15 @@ function mapSobInspectorRows(rows: SheetRow[]): SobInspectorInfo {
   const firstRow = rows[0];
   if (!firstRow) return DEFAULT_SOB_INSPECTOR;
 
+  const sheetPosition = (firstRow['Посада'] || '').trim();
+  const isLegacyPosition =
+    /сектору\s+Служби\s+освітньої\s+безпеки/i.test(sheetPosition) ||
+    /РУП\s+ГУНП/i.test(sheetPosition);
+
   return {
     badge: DEFAULT_SOB_INSPECTOR.badge,
     fullName: firstRow['ПІБ'] || DEFAULT_SOB_INSPECTOR.fullName,
-    position: firstRow['Посада'] || DEFAULT_SOB_INSPECTOR.position,
+    position: !sheetPosition || isLegacyPosition ? DEFAULT_SOB_INSPECTOR.position : sheetPosition,
     schedule: firstRow['Графік'] || DEFAULT_SOB_INSPECTOR.schedule,
     photoUrl: normalizePhotoUrl(firstRow['Фото_URL']),
     description: firstRow['Привітання_або_опис'] || DEFAULT_SOB_INSPECTOR.description,

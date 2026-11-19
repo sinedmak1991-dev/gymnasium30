@@ -212,7 +212,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
                 />
 
                 {/* Текстова частина під фото */}
-                <div className="p-6 flex-1 flex flex-col justify-between">
+                <div className="p-6 flex-1 flex flex-col justify-start">
                   <div>
                     <div className="mb-3">
                       <span
@@ -255,7 +255,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
 
                   {member.credo && (
                     <div
-                      className={`mt-5 pt-4 border-t text-xs italic leading-relaxed ${
+                      className={`mt-4 pt-4 border-t text-xs italic leading-relaxed ${
                         member.featured
                           ? 'border-white/15 text-white/85'
                           : 'border-slate-200/80 text-slate-600'

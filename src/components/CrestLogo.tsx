@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface CrestLogoProps {
   variant?: 'header' | 'footer';
   className?: string;
 }
 
+const STRAIGHT_RAY_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
+const WAVY_RAY_ANGLES = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
+
 export const CrestLogo: React.FC<CrestLogoProps> = ({
   variant = 'header',
   className = 'w-full h-full drop-shadow-sm',
 }) => {
   const isFooter = variant === 'footer';
+  const uid = useId().replace(/:/g, '');
+  const sunDiskGradId = `podillia-sun-disk-${uid}`;
+  const sunRayGradId = `podillia-sun-ray-${uid}`;
 
   return (
     <svg
@@ -20,6 +26,20 @@ export const CrestLogo: React.FC<CrestLogoProps> = ({
       aria-label="Герб Гімназії № 30"
       role="img"
     >
+      <defs>
+        <radialGradient id={sunDiskGradId} cx="42%" cy="38%" r="62%">
+          <stop offset="0%" stopColor="#FFF1BD" />
+          <stop offset="38%" stopColor="#F2D27A" />
+          <stop offset="76%" stopColor="#E2B857" />
+          <stop offset="100%" stopColor="#C4932E" />
+        </radialGradient>
+        <linearGradient id={sunRayGradId} x1="0" y1="-18.5" x2="0" y2="-7.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#F5DC8E" />
+          <stop offset="55%" stopColor="#E2B857" />
+          <stop offset="100%" stopColor="#C89B3C" />
+        </linearGradient>
+      </defs>
+
       {/* Основний щит */}
       <path
         d="M12 16C38 8 82 8 108 16V68C108 102 82 122 60 132C38 122 12 102 12 68V16Z"
@@ -41,63 +61,44 @@ export const CrestLogo: React.FC<CrestLogoProps> = ({
         strokeOpacity="0.7"
       />
 
-      {/* Внутрішній щиток м. Хмельницького (без веж, три перехрещені стріли) */}
-      <path
-        d="M47 26H73V41C73 49 66 54 60 57C54 54 47 49 47 41V26Z"
-        fill="#163A2E"
-        stroke="#E2B857"
-        strokeWidth="2"
-      />
-      {/* Вертикальна стріла вістрям вниз */}
-      <line
-        x1="60"
-        y1="30"
-        x2="60"
-        y2="51"
-        stroke="#E2B857"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M57.5 48L60 52L62.5 48"
-        stroke="#E2B857"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* Дві діагональні стріли вістрям вгору */}
-      <line
-        x1="51"
-        y1="49"
-        x2="69"
-        y2="31"
-        stroke="#E2B857"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M65.5 31H69V34.5"
-        stroke="#E2B857"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <line
-        x1="69"
-        y1="49"
-        x2="51"
-        y2="31"
-        stroke="#E2B857"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M54.5 31H51V34.5"
-        stroke="#E2B857"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {/* Золоте Подільське сонце (16 променів: 8 прямих загострених і 8 хвилястих) */}
+      <g transform="translate(60 39)">
+        {/* 8 прямих загострених променів */}
+        {STRAIGHT_RAY_ANGLES.map((angle) => (
+          <path
+            key={`straight-${angle}`}
+            d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z"
+            fill={`url(#${sunRayGradId})`}
+            transform={`rotate(${angle})`}
+          />
+        ))}
+        {/* 8 хвилястих (полум'яподібних) променів */}
+        {WAVY_RAY_ANGLES.map((angle) => (
+          <path
+            key={`wavy-${angle}`}
+            d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z"
+            fill={`url(#${sunRayGradId})`}
+            transform={`rotate(${angle})`}
+          />
+        ))}
+        {/* Центральний золотий диск сонця з градієнтом */}
+        <circle
+          cx="0"
+          cy="0"
+          r="8.4"
+          fill={`url(#${sunDiskGradId})`}
+          stroke={isFooter ? '#0E261E' : '#163A2E'}
+          strokeWidth="1"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="6.6"
+          stroke="#FFF4CC"
+          strokeOpacity="0.45"
+          strokeWidth="0.7"
+        />
+      </g>
 
       {/* Лівий колосок */}
       <path

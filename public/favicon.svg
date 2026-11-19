@@ -1,0 +1,108 @@
+<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="podillia-sun-disk" cx="42%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#FFF1BD" />
+      <stop offset="38%" stop-color="#F2D27A" />
+      <stop offset="76%" stop-color="#E2B857" />
+      <stop offset="100%" stop-color="#C4932E" />
+    </radialGradient>
+    <linearGradient id="podillia-sun-ray" x1="0" y1="-18.5" x2="0" y2="-7.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F5DC8E" />
+      <stop offset="55%" stop-color="#E2B857" />
+      <stop offset="100%" stop-color="#C89B3C" />
+    </linearGradient>
+  </defs>
+
+  <!-- Основний щит -->
+  <path
+    d="M12 16C38 8 82 8 108 16V68C108 102 82 122 60 132C38 122 12 102 12 68V16Z"
+    fill="#163A2E"
+    stroke="#E2B857"
+    stroke-width="4.5"
+  />
+  <!-- Права половина щита для легкого геральдичного об'єму -->
+  <path
+    d="M60 10C83 10 108 16 108 16V68C108 102 82 122 60 132V10Z"
+    fill="#112E24"
+    fill-opacity="0.45"
+  />
+  <!-- Внутрішня золота рамка -->
+  <path
+    d="M18 21C40 14 80 14 102 21V67C102 97 79 115 60 124C41 115 18 97 18 67V21Z"
+    stroke="#E2B857"
+    stroke-width="1.5"
+    stroke-opacity="0.7"
+  />
+
+  <!-- Золоте Подільське сонце (16 променів: 8 прямих загострених і 8 хвилястих) -->
+  <g transform="translate(60 39)">
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(0)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(45)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(90)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(135)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(180)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(225)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(270)" />
+    <path d="M0 -18.5L1.85 -7.5L-1.85 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(315)" />
+
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(22.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(67.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(112.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(157.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(202.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(247.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(292.5)" />
+    <path d="M-1.6 -7.5C-2.6 -9.6 -2.5 -11.4 -1.0 -13.0C0.3 -14.4 0.7 -15.9 0 -17.8C1.4 -15.9 1.7 -14.2 0.6 -12.8C-0.4 -11.5 -0.3 -9.8 1.6 -7.5Z" fill="url(#podillia-sun-ray)" transform="rotate(337.5)" />
+
+    <circle cx="0" cy="0" r="8.4" fill="url(#podillia-sun-disk)" stroke="#163A2E" stroke-width="1" />
+    <circle cx="0" cy="0" r="6.6" stroke="#FFF4CC" stroke-opacity="0.45" stroke-width="0.7" />
+  </g>
+
+  <!-- Лівий колосок -->
+  <path d="M36 96C26 84 24 68 28 52" stroke="#E2B857" stroke-width="2" stroke-linecap="round" />
+  <ellipse cx="25" cy="60" rx="2.5" ry="5" transform="rotate(-25 25 60)" fill="#E2B857" />
+  <ellipse cx="24" cy="70" rx="2.5" ry="5" transform="rotate(-35 24 70)" fill="#E2B857" />
+  <ellipse cx="26" cy="80" rx="2.5" ry="5" transform="rotate(-45 26 80)" fill="#E2B857" />
+  <ellipse cx="32" cy="57" rx="2.5" ry="5" transform="rotate(20 32 57)" fill="#E2B857" />
+  <ellipse cx="31" cy="67" rx="2.5" ry="5" transform="rotate(15 31 67)" fill="#E2B857" />
+  <ellipse cx="32" cy="77" rx="2.5" ry="5" transform="rotate(10 32 77)" fill="#E2B857" />
+
+  <!-- Правий колосок -->
+  <path d="M84 96C94 84 96 68 92 52" stroke="#E2B857" stroke-width="2" stroke-linecap="round" />
+  <ellipse cx="95" cy="60" rx="2.5" ry="5" transform="rotate(25 95 60)" fill="#E2B857" />
+  <ellipse cx="96" cy="70" rx="2.5" ry="5" transform="rotate(35 96 70)" fill="#E2B857" />
+  <ellipse cx="94" cy="80" rx="2.5" ry="5" transform="rotate(45 94 80)" fill="#E2B857" />
+  <ellipse cx="88" cy="57" rx="2.5" ry="5" transform="rotate(-20 88 57)" fill="#E2B857" />
+  <ellipse cx="89" cy="67" rx="2.5" ry="5" transform="rotate(-15 89 67)" fill="#E2B857" />
+  <ellipse cx="88" cy="77" rx="2.5" ry="5" transform="rotate(-10 88 77)" fill="#E2B857" />
+
+  <!-- Розгорнута книга в центрі -->
+  <path
+    d="M36 86C44 82 54 83 60 88C66 83 76 82 84 86L81 64C74 61 65 62 60 66C55 62 46 61 39 64L36 86Z"
+    fill="#F8F9F5"
+    stroke="#E2B857"
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+  <line x1="60" y1="66" x2="60" y2="88" stroke="#163A2E" stroke-width="1.8" />
+  <line x1="43" y1="69" x2="55" y2="70" stroke="#163A2E" stroke-width="1.4" stroke-linecap="round" />
+  <line x1="43" y1="74" x2="55" y2="75" stroke="#E2B857" stroke-width="1.4" stroke-linecap="round" />
+  <line x1="42" y1="79" x2="55" y2="80" stroke="#163A2E" stroke-width="1.4" stroke-linecap="round" />
+  <line x1="65" y1="70" x2="77" y2="69" stroke="#163A2E" stroke-width="1.4" stroke-linecap="round" />
+  <line x1="65" y1="75" x2="77" y2="74" stroke="#E2B857" stroke-width="1.4" stroke-linecap="round" />
+  <line x1="65" y1="80" x2="78" y2="79" stroke="#163A2E" stroke-width="1.4" stroke-linecap="round" />
+
+  <!-- Цифра 30 внизу -->
+  <text
+    x="60"
+    y="112"
+    text-anchor="middle"
+    fill="#E2B857"
+    font-family="Manrope, system-ui, -apple-system, sans-serif"
+    font-weight="800"
+    font-size="25"
+    letter-spacing="0.5"
+  >
+    30
+  </text>
+</svg>

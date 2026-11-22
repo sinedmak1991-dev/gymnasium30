@@ -3,6 +3,7 @@ import { BookOpenCheck, Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { SCHOOL_INFO } from '../data/schoolData';
 import { CrestLogo } from './CrestLogo';
 import { FacebookIcon } from './FacebookIcon';
+import { Reveal } from './Reveal';
 
 interface FooterProps {
   onOpenContact: (subject?: string) => void;
@@ -10,9 +11,10 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
   return (
-    <footer id="contacts" className="bg-forest text-white pt-16 pb-10 border-t-4 border-gold">
+    <footer id="contacts" className="bg-forest text-white pt-16 pb-10 border-t-4 border-gold scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+        <Reveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           {/* Колонка 1: Герб та офіційна назва */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-4">
@@ -125,7 +127,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               </li>
             </ul>
           </div>
-        </div>
+          </div>
+        </Reveal>
 
         <div className="pt-8 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs text-white/60">
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-1.5 sm:gap-x-3 sm:gap-y-1 text-center md:text-left">

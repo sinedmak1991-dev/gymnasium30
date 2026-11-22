@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { BookOpenCheck, Menu, X } from 'lucide-react';
 import { SCHOOL_INFO } from '../data/schoolData';
 import { CrestLogo } from './CrestLogo';
+import { GENTLE_EASE } from './Reveal';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,7 +65,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="lg:hidden p-2.5 rounded-xl text-forest hover:bg-forest-50 focus:outline-none transition cursor-pointer"
+            className="lg:hidden p-2.5 rounded-xl text-forest hover:bg-forest-50 focus:outline-none transition-all duration-300 active:scale-95 cursor-pointer"
             aria-label={mobileMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
             aria-expanded={mobileMenuOpen}
           >
@@ -73,69 +75,79 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Випадаюче мобільне меню */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100 px-4 pt-3 pb-6 space-y-2 shadow-lg">
-          <a
-            href="#top"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl bg-forest-50 text-forest font-semibold"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: GENTLE_EASE }}
+            className="lg:hidden overflow-hidden bg-white border-t border-slate-100 shadow-lg"
           >
-            Головна
-          </a>
-          <a
-            href="#parents"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
-          >
-            Батькам та учням
-          </a>
-          <a
-            href="#team"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
-          >
-            Педагогічний колектив
-          </a>
-          <a
-            href="#gallery"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
-          >
-            Фотогалерея
-          </a>
-          <a
-            href="#news"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
-          >
-            Новини та події
-          </a>
-          <a
-            href="#transparency"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
-          >
-            Прозорість та відкритість
-          </a>
-          <a
-            href="#contacts"
-            onClick={closeMenu}
-            className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
-          >
-            Контакти
-          </a>
-          <a
-            href={SCHOOL_INFO.diaryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMenu}
-            className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-forest text-gold font-heading font-bold"
-          >
-            <BookOpenCheck className="w-4 h-4" />
-            <span>Увійти в Електронний щоденник</span>
-          </a>
-        </div>
-      )}
+            <div className="px-4 pt-3 pb-6 space-y-2">
+              <a
+                href="#top"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl bg-forest-50 text-forest font-semibold transition-colors duration-200"
+              >
+                Головна
+              </a>
+              <a
+                href="#parents"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium transition-colors duration-200"
+              >
+                Батькам та учням
+              </a>
+              <a
+                href="#team"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium transition-colors duration-200"
+              >
+                Педагогічний колектив
+              </a>
+              <a
+                href="#gallery"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium transition-colors duration-200"
+              >
+                Фотогалерея
+              </a>
+              <a
+                href="#news"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium transition-colors duration-200"
+              >
+                Новини та події
+              </a>
+              <a
+                href="#transparency"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium transition-colors duration-200"
+              >
+                Прозорість та відкритість
+              </a>
+              <a
+                href="#contacts"
+                onClick={closeMenu}
+                className="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-medium transition-colors duration-200"
+              >
+                Контакти
+              </a>
+              <a
+                href={SCHOOL_INFO.diaryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeMenu}
+                className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-forest hover:bg-forest-light text-gold font-heading font-bold transition-all duration-300 active:scale-95"
+              >
+                <BookOpenCheck className="w-4 h-4" />
+                <span>Увійти в Електронний щоденник</span>
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

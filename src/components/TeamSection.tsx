@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ChevronDown, ChevronUp, Maximize2, Users, X } from 'lucide-react';
 import type { TeamCategory, TeamMember } from '../types/school';
+import { GENTLE_EASE, Reveal } from './Reveal';
 
 interface TeamSectionProps {
   members: TeamMember[];
@@ -48,9 +50,9 @@ const TeamPortraitHeader: React.FC<{
           alt={name}
           referrerPolicy="no-referrer"
           onError={() => setImgError(true)}
-          className="w-full h-full object-contain group-hover/photo:scale-[1.02] transition duration-500"
+          className="w-full h-full object-contain group-hover/photo:scale-105 transition-transform duration-500 ease-out"
         />
-        <span className="absolute top-3.5 right-3.5 w-9 h-9 rounded-full bg-forest/80 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition shadow-sm">
+        <span className="absolute top-3.5 right-3.5 w-9 h-9 rounded-full bg-forest/80 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition-opacity duration-300 shadow-sm">
           <Maximize2 className="w-4 h-4" />
         </span>
       </button>
@@ -80,6 +82,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
   const [selectedCategory, setSelectedCategory] = useState<TeamCategory>('all');
   const [isExpanded, setIsExpanded] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   const [previewPhoto, setPreviewPhoto] = useState<{
     url: string;
     name: string;
@@ -129,7 +132,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
       className="py-16 sm:py-20 bg-white border-t border-slate-200/70 scroll-mt-24"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mb-10">
+        <Reveal className="max-w-2xl mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">
             Наша команда
           </span>
@@ -140,10 +143,10 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
             Досвідчені наставники, новатори та фахівці своєї справи, які щодня створюють атмосферу
             підтримки, довіри та пізнання.
           </p>
-        </div>
+        </Reveal>
 
         {/* Фільтр кафедр / підрозділів */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <Reveal delay={0.08} className="flex flex-wrap gap-2 mb-8">
           {TEAM_FILTERS.map((filter) => {
             const isActive = selectedCategory === filter.id;
             return (
@@ -151,17 +154,17 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
                 key={filter.id}
                 type="button"
                 onClick={() => handleCategoryChange(filter.id)}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm transition cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all duration-300 active:scale-95 cursor-pointer ${
                   isActive
-                    ? 'font-semibold bg-forest text-white'
-                    : 'font-medium bg-offwhite text-slate-700 border border-slate-200 hover:border-forest/40'
+                    ? 'font-semibold bg-forest text-white shadow-sm'
+                    : 'font-medium bg-offwhite text-slate-700 border border-slate-200 hover:border-forest/40 hover:bg-forest-50/40'
                 }`}
               >
                 {filter.label}
               </button>
             );
           })}
-        </div>
+        </Reveal>
 
         {/* Стан завантаження, порожній стан кафедри або сітка карток педагогів */}
         {isLoading ? (
@@ -192,15 +195,26 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visibleMembers.map((member) => (
-              <article
-                key={member.id}
-                className={`rounded-2xl overflow-hidden border transition flex flex-col ${
-                  member.featured
-                    ? 'bg-forest text-white border-forest shadow-lg'
-                    : 'bg-offwhite text-slate-800 border-slate-200/90 hover:border-forest/40'
-                }`}
+            {visibleMembers.map((member, index) => (
+              <motion.div
+                key={`${selectedCategory}-${member.id}`}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.08 }}
+                transition={{
+                  duration: 0.45,
+                  delay: (index % 3) * 0.07,
+                  ease: GENTLE_EASE,
+                }}
+                className="h-full"
               >
+                <article
+                  className={`h-full rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 flex flex-col ${
+                    member.featured
+                      ? 'bg-forest text-white border-forest shadow-lg hover:shadow-2xl'
+                      : 'bg-offwhite text-slate-800 border-slate-200/90 hover:border-forest/40 hover:shadow-lg'
+                  }`}
+                >
                 {/* Верхній портретний блок */}
                 <TeamPortraitHeader
                   photoUrl={member.photoUrl}
@@ -265,7 +279,8 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
                     </div>
                   )}
                 </div>
-              </article>
+                </article>
+              </motion.div>
             ))}
           </div>
         )}
@@ -276,7 +291,8 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
             <button
               type="button"
               onClick={handleToggleExpand}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#163A2E] hover:bg-[#1E4D3D] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+              aria-expanded={isExpanded}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#163A2E] hover:bg-[#1E4D3D] text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-300 active:scale-95 cursor-pointer"
             >
               {isExpanded ? (
                 <>
@@ -295,43 +311,53 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
       </div>
 
       {/* Модальне вікно повного перегляду портрета педагога */}
-      {previewPhoto && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
-          onClick={() => setPreviewPhoto(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={previewPhoto.name}
-        >
-          <div
-            className="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-200"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {previewPhoto && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
+            onClick={() => setPreviewPhoto(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={previewPhoto.name}
           >
-            <button
-              type="button"
-              onClick={() => setPreviewPhoto(null)}
-              className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/95 text-slate-700 hover:text-forest flex items-center justify-center shadow cursor-pointer"
-              aria-label="Закрити"
+            <motion.div
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.25, ease: GENTLE_EASE }}
+              className="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-200"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="bg-[#F8F9F5] border-b border-slate-200/70">
-              <img
-                src={previewPhoto.url}
-                alt={previewPhoto.name}
-                referrerPolicy="no-referrer"
-                className="w-full h-auto max-h-[75vh] object-contain mx-auto"
-              />
-            </div>
-            <div className="p-5 text-center">
-              <h4 className="font-heading font-bold text-lg text-forest">{previewPhoto.name}</h4>
-              {previewPhoto.role && (
-                <p className="text-sm text-gold-dark font-medium mt-0.5">{previewPhoto.role}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+              <button
+                type="button"
+                onClick={() => setPreviewPhoto(null)}
+                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/95 text-slate-700 hover:text-forest flex items-center justify-center shadow transition-all duration-300 active:scale-95 cursor-pointer"
+                aria-label="Закрити"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="bg-[#F8F9F5] border-b border-slate-200/70">
+                <img
+                  src={previewPhoto.url}
+                  alt={previewPhoto.name}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-auto max-h-[75vh] object-contain mx-auto"
+                />
+              </div>
+              <div className="p-5 text-center">
+                <h4 className="font-heading font-bold text-lg text-forest">{previewPhoto.name}</h4>
+                {previewPhoto.role && (
+                  <p className="text-sm text-gold-dark font-medium mt-0.5">{previewPhoto.role}</p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

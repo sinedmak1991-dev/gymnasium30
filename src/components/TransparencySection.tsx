@@ -1,6 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ChevronDown, ChevronUp, FileText, Search } from 'lucide-react';
 import type { DocumentCategory, DocumentItem } from '../types/school';
+import { GENTLE_EASE, Reveal } from './Reveal';
 
 interface TransparencySectionProps {
   documents: DocumentItem[];
@@ -26,6 +28,7 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const filteredDocuments = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -62,7 +65,7 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
   return (
     <section id="transparency" ref={sectionRef} className="py-16 sm:py-20 scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+        <Reveal className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">
               Стаття 30 Закону України «Про освіту»
@@ -87,13 +90,13 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
                 setIsExpanded(false);
               }}
               placeholder="Пошук документа (напр. Статут, кошторис)..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:border-forest shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:border-forest shadow-sm transition-colors duration-200"
             />
           </div>
-        </div>
+        </Reveal>
 
         {/* Фільтри категорій документів */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <Reveal delay={0.07} className="flex flex-wrap gap-2 mb-6">
           {DOC_FILTERS.map((filter) => {
             const isActive = selectedCategory === filter.id;
             return (
@@ -101,17 +104,17 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
                 key={filter.id}
                 type="button"
                 onClick={() => handleCategoryChange(filter.id)}
-                className={`px-4 py-1.5 rounded-full text-xs sm:text-sm transition cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs sm:text-sm transition-all duration-300 active:scale-95 cursor-pointer ${
                   isActive
-                    ? 'font-semibold bg-forest text-white'
-                    : 'font-medium bg-white text-slate-600 border border-slate-200 hover:border-forest/40'
+                    ? 'font-semibold bg-forest text-white shadow-sm'
+                    : 'font-medium bg-white text-slate-600 border border-slate-200 hover:border-forest/40 hover:bg-forest-50/40'
                 }`}
               >
                 {filter.label}
               </button>
             );
           })}
-        </div>
+        </Reveal>
 
         {/* Сітка документів */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -131,32 +134,44 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
               За вашим запитом документів не знайдено. Спробуйте змінити ключове слово.
             </div>
           ) : (
-            visibleDocuments.map((doc) => (
-              <button
-                key={doc.id}
-                type="button"
-                onClick={() => onOpenDoc(doc)}
-                className="bg-white p-5 rounded-2xl border border-slate-200/90 hover:border-forest hover:shadow-md transition cursor-pointer flex flex-col justify-between group text-left"
+            visibleDocuments.map((doc, index) => (
+              <motion.div
+                key={`${selectedCategory}-${doc.id}`}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.08 }}
+                transition={{
+                  duration: 0.42,
+                  delay: (index % 3) * 0.06,
+                  ease: GENTLE_EASE,
+                }}
+                className="h-full"
               >
-                <div className="w-full">
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-forest-50 text-forest">
-                      {doc.categoryLabel}
-                    </span>
-                    <FileText className="w-4 h-4 text-slate-400 group-hover:text-gold-dark transition shrink-0" />
+                <button
+                  type="button"
+                  onClick={() => onOpenDoc(doc)}
+                  className="w-full h-full bg-white p-5 rounded-2xl border border-slate-200/90 hover:border-forest hover:shadow-lg hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] cursor-pointer flex flex-col justify-between group text-left"
+                >
+                  <div className="w-full">
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-forest-50 text-forest">
+                        {doc.categoryLabel}
+                      </span>
+                      <FileText className="w-4 h-4 text-slate-400 group-hover:text-gold-dark transition-colors duration-300 shrink-0" />
+                    </div>
+                    <h3 className="font-heading font-bold text-base text-slate-800 group-hover:text-forest transition-colors duration-200 leading-snug mb-2">
+                      {doc.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                      {doc.description}
+                    </p>
                   </div>
-                  <h3 className="font-heading font-bold text-base text-slate-800 group-hover:text-forest transition leading-snug mb-2">
-                    {doc.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                    {doc.description}
-                  </p>
-                </div>
-                <div className="w-full pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                  <span>{doc.date}</span>
-                  <span className="font-semibold text-forest group-hover:underline">Відкрити →</span>
-                </div>
-              </button>
+                  <div className="w-full pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                    <span>{doc.date}</span>
+                    <span className="font-semibold text-forest group-hover:underline">Відкрити →</span>
+                  </div>
+                </button>
+              </motion.div>
             ))
           )}
         </div>
@@ -167,7 +182,8 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
             <button
               type="button"
               onClick={handleToggleExpand}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#163A2E] hover:bg-[#1E4D3D] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+              aria-expanded={isExpanded}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#163A2E] hover:bg-[#1E4D3D] text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-300 active:scale-95 cursor-pointer"
             >
               {isExpanded ? (
                 <>

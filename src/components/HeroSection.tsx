@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   ArrowDownRight,
   FileText,
@@ -8,8 +9,20 @@ import {
   ShieldCheck,
   Users,
 } from 'lucide-react';
+import { GENTLE_EASE } from './Reveal';
 
 export const HeroSection: React.FC = () => {
+  const prefersReducedMotion = useReducedMotion();
+
+  const itemMotion = (delay: number) =>
+    prefersReducedMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 18 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.55, delay, ease: GENTLE_EASE },
+        };
+
   return (
     <section id="top" className="hero-pattern relative overflow-hidden text-white">
       {/* Декоративне золоте світіння */}
@@ -20,48 +33,60 @@ export const HeroSection: React.FC = () => {
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           {/* Ліва колонка: Текст та заклик до дії */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-gold/30 text-gold text-xs sm:text-sm font-medium">
+            <motion.div
+              {...itemMotion(0.04)}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-gold/30 text-gold text-xs sm:text-sm font-medium"
+            >
               <ShieldCheck className="w-4 h-4 shrink-0" />
               <span>Комунальний заклад загальної середньої освіти</span>
-            </div>
+            </motion.div>
 
-            <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-[52px] leading-[1.15] tracking-tight text-white [text-wrap:balance]">
+            <motion.h1
+              {...itemMotion(0.13)}
+              className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-[52px] leading-[1.15] tracking-tight text-white [text-wrap:balance]"
+            >
               Гімназія № 30 <br className="hidden sm:inline" />
               <span className="text-gold">Хмельницької міської ради</span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-base sm:text-lg text-white/85 max-w-2xl leading-relaxed">
+            <motion.p
+              {...itemMotion(0.22)}
+              className="text-base sm:text-lg text-white/85 max-w-2xl leading-relaxed"
+            >
               Простір безпечного розвитку, якісної освіти та сучасних можливостей для кожної
               дитини. Поєднуємо академічні традиції з інноваційними підходами до навчання.
-            </p>
+            </motion.p>
 
-            <div className="pt-2 flex flex-wrap lg:flex-nowrap items-center gap-2.5 xl:gap-3.5">
+            <motion.div
+              {...itemMotion(0.31)}
+              className="pt-2 flex flex-wrap lg:flex-nowrap items-center gap-2.5 xl:gap-3.5"
+            >
               <a
                 href="#news"
-                className="inline-flex items-center justify-center gap-2 bg-gold hover:bg-gold-light text-forest font-heading font-bold text-sm xl:text-base px-4 xl:px-6 py-3 xl:py-3.5 rounded-xl shadow-lg shadow-black/20 transition transform hover:-translate-y-0.5 whitespace-nowrap shrink-0"
+                className="inline-flex items-center justify-center gap-2 bg-gold hover:bg-gold-light text-forest font-heading font-bold text-sm xl:text-base px-4 xl:px-6 py-3 xl:py-3.5 rounded-xl shadow-lg shadow-black/20 transition-all duration-300 hover:-translate-y-0.5 active:scale-95 whitespace-nowrap shrink-0"
               >
                 <Newspaper className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
                 <span>Новини</span>
               </a>
               <a
                 href="#parents"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/25 font-medium text-sm xl:text-base px-4 xl:px-5 py-3 xl:py-3.5 rounded-xl transition whitespace-nowrap shrink-0"
+                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/25 font-medium text-sm xl:text-base px-4 xl:px-5 py-3 xl:py-3.5 rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95 whitespace-nowrap shrink-0"
               >
                 <span>Для батьків та учнів</span>
                 <ArrowDownRight className="w-4 h-4 text-gold shrink-0" />
               </a>
               <a
                 href="#transparency"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/25 font-medium text-sm xl:text-base px-4 xl:px-5 py-3 xl:py-3.5 rounded-xl transition whitespace-nowrap shrink-0"
+                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/25 font-medium text-sm xl:text-base px-4 xl:px-5 py-3 xl:py-3.5 rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95 whitespace-nowrap shrink-0"
               >
                 <FileText className="w-4 h-4 text-gold shrink-0" />
                 <span>Прозорість та відкритість</span>
               </a>
-            </div>
+            </motion.div>
           </div>
 
           {/* Права колонка: Картка пріоритетів закладу */}
-          <div className="lg:col-span-5">
+          <motion.div {...itemMotion(0.28)} className="lg:col-span-5">
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-5">
               <div className="border-b border-white/10 pb-4">
                 <span className="font-heading font-bold text-lg text-gold">
@@ -115,7 +140,7 @@ export const HeroSection: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

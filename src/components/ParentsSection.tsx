@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   BookOpenCheck,
   Clock,
@@ -19,6 +20,7 @@ import {
 import { BELL_SCHEDULE_GROUPS, DEFAULT_SOB_INSPECTOR, SCHOOL_INFO } from '../data/schoolData';
 import type { BellGroupId, ParentTabId, SobInspectorInfo } from '../types/school';
 import { CrestLogo } from './CrestLogo';
+import { GENTLE_EASE, Reveal } from './Reveal';
 import { SafeImage } from './SafeImage';
 
 interface ParentsSectionProps {
@@ -96,6 +98,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
   const [activeTab, setActiveTab] = useState<ParentTabId>('bells');
   const [selectedBellGroup, setSelectedBellGroup] = useState<BellGroupId>('all');
   const [sobPhotoOpen, setSobPhotoOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (!sobPhotoOpen) return;
@@ -117,9 +120,9 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
   const lessonNumbers = Array.from({ length: maxLessonsCount }, (_, index) => index + 1);
 
   return (
-    <section id="parents" className="py-16 sm:py-20">
+    <section id="parents" className="py-16 sm:py-20 scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mb-10">
+        <Reveal className="max-w-3xl mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">
             Батькам та учням
           </span>
@@ -130,50 +133,60 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             Оберіть потрібний розділ, щоб переглянути актуальний розклад дзвінків, умови
             харчування, правила безпеки або перелік документів для вступу.
           </p>
-        </div>
+        </Reveal>
 
         {/* Кнопки-таби (сітка 4 колонки на десктопі, 2 колонки на мобільному) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8" role="tablist">
-          {PARENT_TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-3 p-4 rounded-2xl border text-left transition cursor-pointer ${
-                  isActive
-                    ? 'bg-forest text-white border-forest shadow-md'
-                    : 'bg-white text-slate-700 border-slate-200 hover:border-forest/40'
-                }`}
-              >
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                    isActive ? 'bg-gold/20 text-gold' : 'bg-forest-50 text-forest'
+        <Reveal delay={0.07}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8" role="tablist">
+            {PARENT_TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-3 p-4 rounded-2xl border text-left transition-all duration-300 active:scale-95 cursor-pointer ${
+                    isActive
+                      ? 'bg-forest text-white border-forest shadow-md'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-forest/40 hover:-translate-y-0.5 hover:shadow-sm'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="font-heading font-bold text-sm sm:text-base">{tab.title}</div>
                   <div
-                    className={`text-xs hidden sm:block ${
-                      isActive ? 'opacity-75' : 'text-slate-500'
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                      isActive ? 'bg-gold/20 text-gold' : 'bg-forest-50 text-forest'
                     }`}
                   >
-                    {tab.subtitle}
+                    <Icon className="w-5 h-5" />
                   </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                  <div>
+                    <div className="font-heading font-bold text-sm sm:text-base">{tab.title}</div>
+                    <div
+                      className={`text-xs hidden sm:block ${
+                        isActive ? 'opacity-75' : 'text-slate-500'
+                      }`}
+                    >
+                      {tab.subtitle}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </Reveal>
 
         {/* Контент вкладок */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
+        <Reveal delay={0.12} className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: GENTLE_EASE }}
+            >
           {activeTab === 'bells' && (
             <div className="space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
@@ -201,7 +214,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                       key={filter.id}
                       type="button"
                       onClick={() => setSelectedBellGroup(filter.id)}
-                      className={`px-4 py-2 rounded-full text-xs sm:text-sm transition cursor-pointer whitespace-nowrap ${
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all duration-300 active:scale-95 cursor-pointer whitespace-nowrap ${
                         isActive
                           ? 'font-semibold bg-forest text-white shadow-sm'
                           : 'font-medium bg-offwhite text-slate-700 border border-slate-200 hover:border-forest/40'
@@ -370,7 +383,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                   href={SCHOOL_INFO.diaryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-forest hover:bg-forest-light text-white font-heading font-bold text-sm px-5 py-3 rounded-xl transition shadow-sm"
+                  className="inline-flex items-center gap-2 bg-forest hover:bg-forest-light text-white font-heading font-bold text-sm px-5 py-3 rounded-xl transition-all duration-300 active:scale-95 shadow-sm"
                 >
                   <ExternalLink className="w-4 h-4 text-gold" />
                   <span>Перейти на портал «Мрія»</span>
@@ -484,7 +497,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenContact('Запис на консультацію щодо вступу')}
-                  className="text-sm font-semibold bg-forest text-white hover:bg-forest-light px-4 py-2 rounded-xl transition cursor-pointer"
+                  className="text-sm font-semibold bg-forest text-white hover:bg-forest-light px-4 py-2 rounded-xl transition-all duration-300 active:scale-95 cursor-pointer"
                 >
                   Подати онлайн-запит на консультацію
                 </button>
@@ -558,9 +571,9 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                     <SafeImage
                       src={sobInspector.photoUrl}
                       alt={sobInspector.fullName}
-                      className="w-full h-auto max-h-96 object-contain mx-auto"
+                      className="w-full h-auto max-h-96 object-contain mx-auto group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
-                    <span className="absolute top-3 right-3 w-8 h-8 rounded-full bg-forest/80 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-sm">
+                    <span className="absolute top-3 right-3 w-8 h-8 rounded-full bg-forest/80 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
                       <Maximize2 className="w-4 h-4" />
                     </span>
                   </button>
@@ -796,46 +809,58 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
               </div>
             </div>
           )}
-        </div>
+            </motion.div>
+          </AnimatePresence>
+        </Reveal>
       </div>
 
       {/* Модальне вікно повного перегляду фото інспектора СОБ */}
-      {sobPhotoOpen && sobInspector.photoUrl && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
-          onClick={() => setSobPhotoOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={sobInspector.fullName}
-        >
-          <div
-            className="relative max-w-lg w-full bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-200"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {sobPhotoOpen && sobInspector.photoUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
+            onClick={() => setSobPhotoOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={sobInspector.fullName}
           >
-            <button
-              type="button"
-              onClick={() => setSobPhotoOpen(false)}
-              className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/95 text-slate-700 hover:text-forest flex items-center justify-center shadow cursor-pointer"
-              aria-label="Закрити"
+            <motion.div
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.25, ease: GENTLE_EASE }}
+              className="relative max-w-lg w-full bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-200"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="bg-[#F8F9F5] border-b border-slate-200/70">
-              <SafeImage
-                src={sobInspector.photoUrl}
-                alt={sobInspector.fullName}
-                className="w-full h-auto max-h-[75vh] object-contain mx-auto"
-              />
-            </div>
-            <div className="p-5 text-center">
-              <h4 className="font-heading font-bold text-lg text-forest">
-                {sobInspector.fullName}
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-600 mt-1">{sobInspector.position}</p>
-            </div>
-          </div>
-        </div>
-      )}
+              <button
+                type="button"
+                onClick={() => setSobPhotoOpen(false)}
+                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/95 text-slate-700 hover:text-forest flex items-center justify-center shadow transition-all duration-300 active:scale-95 cursor-pointer"
+                aria-label="Закрити"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="bg-[#F8F9F5] border-b border-slate-200/70">
+                <SafeImage
+                  src={sobInspector.photoUrl}
+                  alt={sobInspector.fullName}
+                  className="w-full h-auto max-h-[75vh] object-contain mx-auto"
+                />
+              </div>
+              <div className="p-5 text-center">
+                <h4 className="font-heading font-bold text-lg text-forest">
+                  {sobInspector.fullName}
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 mt-1">{sobInspector.position}</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

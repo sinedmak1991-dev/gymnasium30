@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { MotionConfig } from 'motion/react';
 import { ContactModal } from './components/ContactModal';
 import { DocModal } from './components/DocModal';
 import { Footer } from './components/Footer';
@@ -119,7 +120,8 @@ export default function App() {
     lightboxIndex !== null ? gallery[lightboxIndex] ?? null : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-offwhite text-slate-800 font-sans antialiased">
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen flex flex-col bg-offwhite text-slate-800 font-sans antialiased">
       <TopBar onOpenContact={openContactModal} />
 
       <Header />
@@ -169,7 +171,8 @@ export default function App() {
 
       <NewsModal item={selectedNews} onClose={() => setSelectedNewsId(null)} />
 
-      <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />
-    </div>
+        <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />
+      </div>
+    </MotionConfig>
   );
 }

@@ -39,7 +39,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenContact }) => {
             rel="noopener noreferrer"
             aria-label="Офіційна сторінка у Facebook"
             title="Офіційна сторінка у Facebook"
-            className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-gold text-white hover:text-forest font-medium px-2.5 sm:px-3 py-1 rounded-full border border-white/15 hover:border-gold transition duration-200 whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-gold text-white hover:text-forest font-medium px-2.5 sm:px-3 py-1 rounded-full border border-white/15 hover:border-gold transition-all duration-300 active:scale-95 whitespace-nowrap shrink-0"
           >
             <FacebookIcon className="w-3.5 h-3.5" />
             <span className="hidden lg:inline">Facebook</span>
@@ -48,7 +48,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenContact }) => {
             href={SCHOOL_INFO.diaryUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-gold text-forest hover:bg-gold-light font-heading font-bold px-3.5 py-1 rounded-full transition duration-200 shadow-sm whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 bg-gold text-forest hover:bg-gold-light font-heading font-bold px-3.5 py-1 rounded-full transition-all duration-300 active:scale-95 shadow-sm whitespace-nowrap shrink-0"
           >
             <BookOpenCheck className="w-3.5 h-3.5" />
             <span>Е-щоденник</span>
@@ -56,7 +56,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenContact }) => {
           <button
             type="button"
             onClick={() => onOpenContact()}
-            className="inline-flex items-center gap-1.5 bg-gold/15 hover:bg-gold text-gold hover:text-forest font-medium px-3 py-1 rounded-full border border-gold/40 transition duration-200 cursor-pointer whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 bg-gold/15 hover:bg-gold text-gold hover:text-forest font-medium px-3 py-1 rounded-full border border-gold/40 transition-all duration-300 active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
           >
             <MessageSquare className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Зворотний зв&apos;язок</span>

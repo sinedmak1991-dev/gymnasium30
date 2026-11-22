@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Check, Loader2, Mail, X } from 'lucide-react';
+import { GENTLE_EASE } from './Reveal';
 
 const GOOGLE_APPS_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbxMw1G-fREEe4VNRMYA7G0WjJ0GI4T4biY8EOv3envjoC6Ql7FcuRGQJzYs3Kp2BuOcFw/exec';
@@ -22,6 +24,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (isOpen) {
@@ -39,8 +42,6 @@ export const ContactModal: React.FC<ContactModalProps> = ({
     }, 2500);
     return () => window.clearTimeout(timer);
   }, [isOpen, submitted, onClose]);
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,25 +91,35 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="contact-modal-title"
-    >
-      <div
-        className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
           onClick={onClose}
-          className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 cursor-pointer"
-          aria-label="Закрити"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="contact-modal-title"
         >
-          <X className="w-5 h-5" />
-        </button>
+          <motion.div
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+            transition={{ duration: 0.25, ease: GENTLE_EASE }}
+            className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 transition-all duration-300 active:scale-95 cursor-pointer"
+              aria-label="Закрити"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
         <div className="w-12 h-12 rounded-xl bg-[#163A2E]/10 text-[#163A2E] border border-[#163A2E]/15 flex items-center justify-center mb-4">
           <Mail className="w-6 h-6" />
@@ -187,7 +198,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-light text-white font-heading font-bold py-3 rounded-xl transition cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-light text-white font-heading font-bold py-3 rounded-xl transition-all duration-300 active:scale-95 disabled:active:scale-100 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{isSubmitting ? 'Надсилання...' : 'Надіслати повідомлення'}</span>
@@ -205,13 +216,15 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="mt-2 bg-offwhite hover:bg-slate-200 text-forest font-semibold text-sm px-5 py-2 rounded-xl transition cursor-pointer"
+              className="mt-2 bg-offwhite hover:bg-slate-200 text-forest font-semibold text-sm px-5 py-2 rounded-xl transition-all duration-300 active:scale-95 cursor-pointer"
             >
               Закрити
             </button>
           </div>
         )}
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

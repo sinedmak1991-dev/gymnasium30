@@ -39,7 +39,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
     <section
       id="news"
       ref={sectionRef}
-      className="py-16 sm:py-20 bg-white border-y border-slate-200/70 scroll-mt-24"
+      className="py-16 sm:py-20 bg-white border-y border-slate-200/70 scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal className="mb-10">

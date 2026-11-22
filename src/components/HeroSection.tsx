@@ -24,7 +24,7 @@ export const HeroSection: React.FC = () => {
         };
 
   return (
-    <section id="top" className="hero-pattern relative overflow-hidden text-white">
+    <section id="home" className="hero-pattern relative overflow-hidden text-white scroll-mt-20">
       {/* Декоративне золоте світіння */}
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />

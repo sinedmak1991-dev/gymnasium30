@@ -129,7 +129,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
     <section
       id="team"
       ref={sectionRef}
-      className="py-16 sm:py-20 bg-white border-t border-slate-200/70 scroll-mt-24"
+      className="py-16 sm:py-20 bg-white border-t border-slate-200/70 scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal className="max-w-2xl mb-10">

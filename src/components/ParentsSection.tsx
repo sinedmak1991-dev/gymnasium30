@@ -120,7 +120,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
   const lessonNumbers = Array.from({ length: maxLessonsCount }, (_, index) => index + 1);
 
   return (
-    <section id="parents" className="py-16 sm:py-20 scroll-mt-24">
+    <section id="parents" className="py-16 sm:py-20 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal className="max-w-3xl mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">

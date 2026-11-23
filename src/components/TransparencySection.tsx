@@ -16,7 +16,7 @@ const DOC_FILTERS: { id: DocumentCategory; label: string }[] = [
   { id: 'all', label: 'Усі документи' },
   { id: 'statute', label: 'Установчі та освітні' },
   { id: 'finance', label: 'Фінанси та кошторис' },
-  { id: 'hr', label: 'Вакансії та територія' },
+  { id: 'hr', label: 'Кадри, прийом та територія' },
 ];
 
 export const TransparencySection: React.FC<TransparencySectionProps> = ({

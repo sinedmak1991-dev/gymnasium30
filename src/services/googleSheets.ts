@@ -216,8 +216,12 @@ function normalizeDocumentCategory(raw?: string): Exclude<DocumentCategory, 'all
     value === 'hr' ||
     value.includes('кадр') ||
     value.includes('ваканс') ||
+    value.includes('атестац') ||
     value.includes('територ') ||
-    value.includes('вступ')
+    value.includes('прийом') ||
+    value.includes('вступ') ||
+    value.includes('ліценз') ||
+    value.includes('обсяг')
   ) {
     return 'hr';
   }

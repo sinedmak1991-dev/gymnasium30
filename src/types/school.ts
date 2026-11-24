@@ -6,7 +6,8 @@ export type ParentTabId =
   | 'admissions'
   | 'language'
   | 'sob'
-  | 'history';
+  | 'history'
+  | 'trustbox';
 
 export interface SobInspectorInfo {
   badge: string;

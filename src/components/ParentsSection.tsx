@@ -22,6 +22,7 @@ import type { BellGroupId, ParentTabId, SobInspectorInfo } from '../types/school
 import { CrestLogo } from './CrestLogo';
 import { GENTLE_EASE, Reveal } from './Reveal';
 import { SafeImage } from './SafeImage';
+import { TrustBoxPanel } from './TrustBoxPanel';
 
 interface ParentsSectionProps {
   onOpenContact: (subject?: string) => void;
@@ -82,6 +83,12 @@ const PARENT_TABS: {
     subtitle: 'Історія, візія та гімн',
     icon: Landmark,
   },
+  {
+    id: 'trustbox',
+    title: 'Е-скринька довіри',
+    subtitle: 'Анонімно про булінг',
+    icon: HeartHandshake,
+  },
 ];
 
 const BELL_FILTERS: { id: BellGroupId; label: string }[] = [
@@ -135,9 +142,9 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
           </p>
         </Reveal>
 
-        {/* Кнопки-таби (сітка 4 колонки на десктопі, 2 колонки на мобільному) */}
+        {/* Кнопки-таби (симетрична сітка 3x3 на десктопі, 2 колонки на планшеті, 1 колонка на смартфоні) */}
         <Reveal delay={0.07}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8" role="tablist">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8" role="tablist">
             {PARENT_TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -161,11 +168,13 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                   >
                     <Icon className="w-5 h-5" />
                   </div>
-                  <div>
-                    <div className="font-heading font-bold text-sm sm:text-base">{tab.title}</div>
+                  <div className="min-w-0">
+                    <div className="font-heading font-bold text-sm sm:text-base leading-snug">
+                      {tab.title}
+                    </div>
                     <div
-                      className={`text-xs hidden sm:block ${
-                        isActive ? 'opacity-75' : 'text-slate-500'
+                      className={`text-xs mt-0.5 ${
+                        isActive ? 'text-white/80' : 'text-slate-500'
                       }`}
                     >
                       {tab.subtitle}
@@ -809,6 +818,8 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
               </div>
             </div>
           )}
+
+          {activeTab === 'trustbox' && <TrustBoxPanel />}
             </motion.div>
           </AnimatePresence>
         </Reveal>

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Check, Loader2, Mail, X } from 'lucide-react';
+import { submitFeedbackRequest } from '../services/feedback';
 import { GENTLE_EASE } from './Reveal';
-
-const GOOGLE_APPS_SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbxMw1G-fREEe4VNRMYA7G0WjJ0GI4T4biY8EOv3envjoC6Ql7FcuRGQJzYs3Kp2BuOcFw/exec';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -60,23 +58,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({
     setErrorMessage('');
     setIsSubmitting(true);
 
-    const payloadBody = JSON.stringify({
-      name: trimmedName,
-      contact: trimmedContact,
-      topic: trimmedTopic,
-      message: trimmedMessage,
-    });
-
-    console.log('Надсилання запиту зворотного зв’язку:', payloadBody);
-
     try {
-      await fetch(GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
-        },
-        body: payloadBody,
+      await submitFeedbackRequest({
+        name: trimmedName,
+        contact: trimmedContact,
+        topic: trimmedTopic,
+        message: trimmedMessage,
       });
 
       setName('');

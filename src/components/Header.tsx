@@ -1,12 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { BookOpenCheck, Menu, Search, X } from 'lucide-react';
+import { BookOpenCheck, Eye, Menu, Search, X } from 'lucide-react';
 import { SCHOOL_INFO } from '../data/schoolData';
+import type {
+  A11yColorScheme,
+  A11yFontSize,
+  A11yImagesMode,
+  AccessibilitySettings,
+} from '../hooks/useAccessibility';
+import { AccessibilityBar } from './AccessibilityBar';
 import { CrestLogo } from './CrestLogo';
 import { GENTLE_EASE } from './Reveal';
 
 interface HeaderProps {
   onOpenSearch: () => void;
+  a11ySettings: AccessibilitySettings;
+  isA11yActive: boolean;
+  onA11yFontSizeChange: (size: A11yFontSize) => void;
+  onA11yColorSchemeChange: (scheme: A11yColorScheme) => void;
+  onA11yImagesModeChange: (mode: A11yImagesMode) => void;
+  onA11yReset: () => void;
 }
 
 const NAV_ITEMS = [
@@ -23,8 +36,17 @@ const NAV_ITEMS = [
   },
 ];
 
-export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onOpenSearch,
+  a11ySettings,
+  isA11yActive,
+  onA11yFontSizeChange,
+  onA11yColorSchemeChange,
+  onA11yImagesModeChange,
+  onA11yReset,
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [a11yPanelOpen, setA11yPanelOpen] = useState(false);
   const scrollTimerRef = useRef<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
@@ -170,24 +192,39 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                 </a>
               ))}
 
-              <button
-                type="button"
-                onClick={onOpenSearch}
-                title="Пошук по сайту (Ctrl+K)"
-                aria-label="Пошук по сайту"
-                className="inline-flex items-center gap-2 px-2.5 xl:px-3 py-1.5 rounded-xl bg-offwhite hover:bg-forest-50 text-forest border border-slate-200/90 hover:border-forest/35 transition-all duration-200 active:scale-95 cursor-pointer shrink-0"
-              >
-                <Search className="w-4 h-4 text-forest shrink-0" />
-                <span className="hidden xl:inline text-xs font-semibold text-slate-600">
-                  Пошук
-                </span>
-                <kbd className="hidden 2xl:inline-flex items-center px-1.5 py-0.5 text-[10px] font-sans font-semibold text-slate-500 bg-white border border-slate-200 rounded">
-                  Ctrl+K
-                </kbd>
-              </button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={onOpenSearch}
+                  title="Пошук по сайту (Ctrl+K)"
+                  aria-label="Пошук по сайту"
+                  className="inline-flex items-center gap-2 px-2.5 xl:px-3 py-1.5 rounded-xl bg-offwhite hover:bg-forest-50 text-forest border border-slate-200/90 hover:border-forest/35 transition-all duration-200 active:scale-95 cursor-pointer shrink-0"
+                >
+                  <Search className="w-4 h-4 text-forest shrink-0" />
+                  <span className="hidden xl:inline text-xs font-semibold text-slate-600">
+                    Пошук
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setA11yPanelOpen((prev) => !prev)}
+                  title="Людям із порушеннями зору"
+                  aria-label="Людям із порушеннями зору"
+                  aria-expanded={a11yPanelOpen}
+                  aria-pressed={isA11yActive || a11yPanelOpen}
+                  className={`inline-flex items-center justify-center p-2 rounded-xl border transition-all duration-200 active:scale-95 cursor-pointer shrink-0 ${
+                    isA11yActive || a11yPanelOpen
+                      ? 'bg-forest text-gold border-forest shadow-sm'
+                      : 'bg-offwhite hover:bg-forest-50 text-forest border-slate-200/90 hover:border-forest/35'
+                  }`}
+                >
+                  <Eye className="w-4 h-4 shrink-0" />
+                </button>
+              </div>
             </nav>
 
-            {/* Кнопки мобільної панелі: пошук + меню */}
+            {/* Кнопки мобільної панелі: пошук + доступність + меню */}
             <div className="flex lg:hidden items-center gap-1">
               <button
                 type="button"
@@ -203,7 +240,28 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
               </button>
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                onClick={() => {
+                  closeMenu();
+                  setA11yPanelOpen((prev) => !prev);
+                }}
+                title="Людям із порушеннями зору"
+                aria-label="Людям із порушеннями зору"
+                aria-expanded={a11yPanelOpen}
+                aria-pressed={isA11yActive || a11yPanelOpen}
+                className={`p-2.5 rounded-xl focus:outline-none transition-all duration-300 active:scale-95 cursor-pointer ${
+                  isA11yActive || a11yPanelOpen
+                    ? 'bg-forest text-gold'
+                    : 'text-forest hover:bg-forest-50'
+                }`}
+              >
+                <Eye className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setA11yPanelOpen(false);
+                  setMobileMenuOpen((prev) => !prev);
+                }}
                 className="p-2.5 rounded-xl text-forest hover:bg-forest-50 focus:outline-none transition-all duration-300 active:scale-95 cursor-pointer"
                 aria-label={mobileMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
                 aria-expanded={mobileMenuOpen}
@@ -213,6 +271,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
             </div>
           </div>
         </div>
+
+        {/* Панель налаштувань для людей із порушеннями зору */}
+        <AccessibilityBar
+          isOpen={a11yPanelOpen}
+          settings={a11ySettings}
+          isCustomActive={isA11yActive}
+          onFontSizeChange={onA11yFontSizeChange}
+          onColorSchemeChange={onA11yColorSchemeChange}
+          onImagesModeChange={onA11yImagesModeChange}
+          onReset={onA11yReset}
+          onClose={() => setA11yPanelOpen(false)}
+        />
 
         {/* Випадаюче мобільне меню */}
         <AnimatePresence>
@@ -257,6 +327,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                 >
                   <Search className="w-4 h-4 text-gold-dark shrink-0" />
                   <span>Пошук по сайту</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    setA11yPanelOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-offwhite hover:bg-forest-50 text-forest border border-slate-200/80 font-semibold transition-all duration-200 active:scale-[0.99] cursor-pointer"
+                >
+                  <Eye className="w-4 h-4 text-gold-dark shrink-0" />
+                  <span>Людям із порушеннями зору</span>
                 </button>
                 <a
                   href={SCHOOL_INFO.diaryUrl}

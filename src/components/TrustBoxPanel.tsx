@@ -143,6 +143,7 @@ export const TrustBoxPanel: React.FC = () => {
                         <button
                           key={role}
                           type="button"
+                          aria-pressed={isSelected}
                           disabled={isSubmitting}
                           onClick={() => setSenderRole(role)}
                           className={`px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-60 ${
@@ -166,6 +167,7 @@ export const TrustBoxPanel: React.FC = () => {
                   <div className="grid sm:grid-cols-2 gap-2.5">
                     <button
                       type="button"
+                      aria-pressed={mode === 'anonymous'}
                       disabled={isSubmitting}
                       onClick={() => setMode('anonymous')}
                       className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-60 ${
@@ -184,6 +186,7 @@ export const TrustBoxPanel: React.FC = () => {
 
                     <button
                       type="button"
+                      aria-pressed={mode === 'with_contacts'}
                       disabled={isSubmitting}
                       onClick={() => setMode('with_contacts')}
                       className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-60 ${

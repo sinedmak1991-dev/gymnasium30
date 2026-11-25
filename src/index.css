@@ -53,3 +53,269 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ===== Версія для людей із порушеннями зору (WCAG) ===== */
+
+html[data-a11y-font="115"] header .h-20,
+html[data-a11y-font="130"] header .h-20 {
+  height: auto;
+  min-height: 5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+html[data-a11y-font="130"] header nav {
+  flex-wrap: wrap;
+  row-gap: 0.4rem;
+}
+
+/* Режими відображення зображень */
+html.a11y-images-grayscale img {
+  filter: grayscale(100%) contrast(1.25) !important;
+}
+
+html.a11y-images-hide img {
+  display: none !important;
+}
+
+/* 1. Чорно-біла висококонтрастна схема (білий фон, чорний текст) */
+html.a11y-light-contrast,
+html.a11y-light-contrast body {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+html.a11y-light-contrast *:not(svg):not(path):not(circle):not(rect):not(polygon):not(line):not(polyline):not(ellipse) {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html.a11y-light-contrast .hero-pattern,
+html.a11y-light-contrast header,
+html.a11y-light-contrast footer,
+html.a11y-light-contrast main,
+html.a11y-light-contrast section,
+html.a11y-light-contrast article,
+html.a11y-light-contrast nav,
+html.a11y-light-contrast table,
+html.a11y-light-contrast thead,
+html.a11y-light-contrast tbody,
+html.a11y-light-contrast tr,
+html.a11y-light-contrast th,
+html.a11y-light-contrast td,
+html.a11y-light-contrast [class*="bg-"] {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #000000 !important;
+}
+
+html.a11y-light-contrast [role="dialog"] {
+  background-color: rgba(0, 0, 0, 0.72) !important;
+}
+
+html.a11y-light-contrast [role="dialog"][aria-labelledby="lightbox-title"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+html.a11y-light-contrast [role="dialog"] [class*="bg-white"],
+html.a11y-light-contrast [role="dialog"] [class*="bg-offwhite"],
+html.a11y-light-contrast [role="dialog"] [class*="rounded-2xl"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+html.a11y-light-contrast p,
+html.a11y-light-contrast span,
+html.a11y-light-contrast div,
+html.a11y-light-contrast li,
+html.a11y-light-contrast label,
+html.a11y-light-contrast h1,
+html.a11y-light-contrast h2,
+html.a11y-light-contrast h3,
+html.a11y-light-contrast h4,
+html.a11y-light-contrast h5,
+html.a11y-light-contrast h6,
+html.a11y-light-contrast strong {
+  color: #000000 !important;
+}
+
+html.a11y-light-contrast [class*="border"] {
+  border-color: #000000 !important;
+}
+
+html.a11y-light-contrast a {
+  color: #000000 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+html.a11y-light-contrast button,
+html.a11y-light-contrast input,
+html.a11y-light-contrast textarea,
+html.a11y-light-contrast select,
+html.a11y-light-contrast a[class*="rounded"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+html.a11y-light-contrast button[aria-selected="true"],
+html.a11y-light-contrast button[aria-pressed="true"],
+html.a11y-light-contrast button[type="submit"],
+html.a11y-light-contrast button:hover,
+html.a11y-light-contrast a[class*="rounded"]:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+html.a11y-light-contrast button[aria-selected="true"] *,
+html.a11y-light-contrast button[aria-pressed="true"] *,
+html.a11y-light-contrast button[type="submit"] *,
+html.a11y-light-contrast button:hover *,
+html.a11y-light-contrast a[class*="rounded"]:hover * {
+  color: #ffffff !important;
+  background-color: transparent !important;
+}
+
+html.a11y-light-contrast input::placeholder,
+html.a11y-light-contrast textarea::placeholder {
+  color: #333333 !important;
+}
+
+html.a11y-light-contrast :focus-visible {
+  outline: 3px solid #000000 !important;
+  outline-offset: 2px !important;
+}
+
+/* 2. Темна висококонтрастна схема (чорний фон, білий та жовтий текст) */
+html.a11y-dark-contrast,
+html.a11y-dark-contrast body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.a11y-dark-contrast *:not(svg):not(path):not(circle):not(rect):not(polygon):not(line):not(polyline):not(ellipse) {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html.a11y-dark-contrast .hero-pattern,
+html.a11y-dark-contrast header,
+html.a11y-dark-contrast footer,
+html.a11y-dark-contrast main,
+html.a11y-dark-contrast section,
+html.a11y-dark-contrast article,
+html.a11y-dark-contrast nav,
+html.a11y-dark-contrast table,
+html.a11y-dark-contrast thead,
+html.a11y-dark-contrast tbody,
+html.a11y-dark-contrast tr,
+html.a11y-dark-contrast th,
+html.a11y-dark-contrast td,
+html.a11y-dark-contrast [class*="bg-"] {
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+html.a11y-dark-contrast [role="dialog"] {
+  background-color: rgba(0, 0, 0, 0.88) !important;
+}
+
+html.a11y-dark-contrast [role="dialog"][aria-labelledby="lightbox-title"] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.a11y-dark-contrast [role="dialog"] [class*="bg-white"],
+html.a11y-dark-contrast [role="dialog"] [class*="bg-offwhite"],
+html.a11y-dark-contrast [role="dialog"] [class*="rounded-2xl"] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffe600 !important;
+}
+
+html.a11y-dark-contrast p,
+html.a11y-dark-contrast span,
+html.a11y-dark-contrast div,
+html.a11y-dark-contrast li,
+html.a11y-dark-contrast label,
+html.a11y-dark-contrast td {
+  color: #ffffff !important;
+}
+
+html.a11y-dark-contrast h1,
+html.a11y-dark-contrast h2,
+html.a11y-dark-contrast h3,
+html.a11y-dark-contrast h4,
+html.a11y-dark-contrast h5,
+html.a11y-dark-contrast h6,
+html.a11y-dark-contrast th,
+html.a11y-dark-contrast strong {
+  color: #ffe600 !important;
+}
+
+html.a11y-dark-contrast [class*="border"] {
+  border-color: #ffe600 !important;
+}
+
+html.a11y-dark-contrast a {
+  color: #ffe600 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+html.a11y-dark-contrast button,
+html.a11y-dark-contrast input,
+html.a11y-dark-contrast textarea,
+html.a11y-dark-contrast select,
+html.a11y-dark-contrast a[class*="rounded"] {
+  background-color: #000000 !important;
+  color: #ffe600 !important;
+  border: 2px solid #ffe600 !important;
+}
+
+html.a11y-dark-contrast input,
+html.a11y-dark-contrast textarea,
+html.a11y-dark-contrast select {
+  color: #ffffff !important;
+}
+
+html.a11y-dark-contrast button *,
+html.a11y-dark-contrast a[class*="rounded"] * {
+  color: #ffe600 !important;
+}
+
+html.a11y-dark-contrast button[aria-selected="true"],
+html.a11y-dark-contrast button[aria-pressed="true"],
+html.a11y-dark-contrast button[type="submit"],
+html.a11y-dark-contrast button:hover,
+html.a11y-dark-contrast a[class*="rounded"]:hover {
+  background-color: #ffe600 !important;
+  color: #000000 !important;
+  border-color: #ffe600 !important;
+}
+
+html.a11y-dark-contrast button[aria-selected="true"] *,
+html.a11y-dark-contrast button[aria-pressed="true"] *,
+html.a11y-dark-contrast button[type="submit"] *,
+html.a11y-dark-contrast button:hover *,
+html.a11y-dark-contrast a[class*="rounded"]:hover * {
+  color: #000000 !important;
+  background-color: transparent !important;
+}
+
+html.a11y-dark-contrast input::placeholder,
+html.a11y-dark-contrast textarea::placeholder {
+  color: #d4d4d4 !important;
+}
+
+html.a11y-dark-contrast :focus-visible {
+  outline: 3px solid #ffe600 !important;
+  outline-offset: 2px !important;
+}

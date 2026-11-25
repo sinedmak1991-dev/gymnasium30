@@ -16,6 +16,7 @@ import { TeamSection } from './components/TeamSection';
 import { TopBar } from './components/TopBar';
 import { TransparencySection } from './components/TransparencySection';
 import { DEFAULT_SOB_INSPECTOR } from './data/schoolData';
+import { useAccessibility } from './hooks/useAccessibility';
 import { loadSchoolSheetsData } from './services/googleSheets';
 import type {
   DocumentItem,
@@ -38,6 +39,15 @@ export default function App() {
     open: false,
     subject: 'Загальне питання',
   });
+  const {
+    settings: a11ySettings,
+    isCustomActive: isA11yActive,
+    setFontSize: setA11yFontSize,
+    setColorScheme: setA11yColorScheme,
+    setImagesMode: setA11yImagesMode,
+    resetSettings: resetA11ySettings,
+  } = useAccessibility();
+
   const [selectedNewsId, setSelectedNewsId] = useState<number | null>(null);
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -159,7 +169,15 @@ export default function App() {
       <div className="min-h-screen flex flex-col bg-offwhite text-slate-800 font-sans antialiased">
       <TopBar onOpenContact={openContactModal} />
 
-      <Header onOpenSearch={() => setSearchOpen(true)} />
+      <Header
+        onOpenSearch={() => setSearchOpen(true)}
+        a11ySettings={a11ySettings}
+        isA11yActive={isA11yActive}
+        onA11yFontSizeChange={setA11yFontSize}
+        onA11yColorSchemeChange={setA11yColorScheme}
+        onA11yImagesModeChange={setA11yImagesMode}
+        onA11yReset={resetA11ySettings}
+      />
 
       <main className="flex-1">
         <HeroSection />

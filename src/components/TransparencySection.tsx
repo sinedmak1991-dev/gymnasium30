@@ -166,9 +166,11 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
                       {doc.description}
                     </p>
                   </div>
-                  <div className="w-full pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                    <span>{doc.date}</span>
-                    <span className="font-semibold text-forest group-hover:underline">Відкрити →</span>
+                  <div className="w-full pt-4 mt-4 border-t border-slate-100 flex items-center justify-between gap-3 text-xs text-slate-400">
+                    <span className="min-w-0">{doc.date}</span>
+                    <span className="font-semibold text-forest group-hover:underline whitespace-nowrap shrink-0">
+                      Відкрити →
+                    </span>
                   </div>
                 </button>
               </motion.div>

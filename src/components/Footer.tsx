@@ -96,7 +96,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
             <ul className="space-y-3 text-sm text-white/85">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
-                <span>{SCHOOL_INFO.footerAddress}</span>
+                <a
+                  href={SCHOOL_INFO.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Відкрити на Google Картах"
+                  className="hover:text-gold transition"
+                >
+                  {SCHOOL_INFO.footerAddress}
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-gold flex-shrink-0" />
@@ -110,9 +118,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
                   {SCHOOL_INFO.footerEmail}
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-gold flex-shrink-0" />
-                <span className="tabular-nums">{SCHOOL_INFO.workHours}</span>
+              <li className="flex items-start gap-3">
+                <Clock className="w-4 h-4 text-gold flex-shrink-0 mt-0.5" />
+                <div className="space-y-0.5 tabular-nums">
+                  <div>{SCHOOL_INFO.workHours}</div>
+                  <div className="text-xs text-white/70">{SCHOOL_INFO.directorReceptionHours}</div>
+                </div>
               </li>
               <li className="flex items-center gap-3">
                 <FacebookIcon className="w-4 h-4 text-gold flex-shrink-0" />
@@ -130,35 +141,19 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
           </div>
         </Reveal>
 
-        <div className="pt-8 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs text-white/60">
-          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-1.5 sm:gap-x-3 sm:gap-y-1 text-center md:text-left">
-            <span>© 2026 {SCHOOL_INFO.fullName}. Усі права захищено.</span>
-            <span className="hidden sm:inline text-white/25" aria-hidden="true">
-              •
-            </span>
-            <span>
-              Хостинг та домен надано компанією{' '}
-              <a
-                href="https://cityhost.ua"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/80 hover:text-gold transition underline decoration-white/25 hover:decoration-gold underline-offset-2"
-              >
-                CityHost
-              </a>
-            </span>
-          </div>
-          <div className="flex items-center justify-center md:justify-end gap-4 shrink-0">
+        <div className="pt-8 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center md:justify-between gap-2 text-xs text-white/60 text-center md:text-left">
+          <span>© 2026 {SCHOOL_INFO.fullName}. Усі права захищено.</span>
+          <span>
+            Хостинг та домен надано компанією{' '}
             <a
-              href={SCHOOL_INFO.facebookUrl}
+              href="https://cityhost.ua"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-gold transition inline-flex items-center gap-2 text-white/80"
+              className="text-white/80 hover:text-gold transition underline decoration-white/25 hover:decoration-gold underline-offset-2"
             >
-              <FacebookIcon className="w-4 h-4 text-gold shrink-0" />
-              <span>Офіційна сторінка Facebook</span>
+              CityHost
             </a>
-          </div>
+          </span>
         </div>
       </div>
     </footer>

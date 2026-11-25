@@ -85,7 +85,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
           <div className="h-full w-full overflow-y-auto overscroll-contain no-scrollbar">
             <div className="min-h-full flex items-center justify-center px-14 sm:px-20 py-4">
               <div
-                className="my-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto overscroll-contain no-scrollbar flex flex-col items-center"
+                className="my-8 max-w-3xl w-full mx-auto max-h-[90vh] overflow-y-auto overscroll-contain no-scrollbar flex flex-col items-center"
                 onClick={(e) => e.stopPropagation()}
               >
                 <AnimatePresence mode="wait">
@@ -108,16 +108,23 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
                         className="w-full h-auto max-h-[70vh] object-contain mx-auto bg-[#163A2E]/5"
                       />
                     </div>
-                    <div className="mt-4 text-center text-white max-w-2xl px-2 pb-2">
-                      <span className="inline-block text-xs font-bold uppercase tracking-wider text-gold mb-1">
-                        {item.categoryLabel}
-                      </span>
-                      <h4 id="lightbox-title" className="font-heading font-bold text-lg sm:text-xl">
-                        {item.title}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-white/75 mt-1 whitespace-pre-line leading-relaxed">
-                        {item.description}
-                      </p>
+                    <div className="mt-5 w-full max-w-3xl mx-auto text-white pb-2">
+                      <div className="text-center">
+                        <span className="inline-block text-xs font-bold uppercase tracking-wider text-gold mb-1">
+                          {item.categoryLabel}
+                        </span>
+                        <h4
+                          id="lightbox-title"
+                          className="font-heading font-bold text-lg sm:text-xl text-center"
+                        >
+                          {item.title}
+                        </h4>
+                      </div>
+                      {item.description && (
+                        <p className="w-full text-xs sm:text-sm md:text-base text-white/85 mt-3 text-left md:text-justify whitespace-pre-line leading-relaxed">
+                          {item.description}
+                        </p>
+                      )}
                     </div>
                   </motion.div>
                 </AnimatePresence>

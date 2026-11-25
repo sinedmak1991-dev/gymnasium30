@@ -92,7 +92,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
                 transition={{ duration: 0.25, ease: GENTLE_EASE }}
-                className="my-8 bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 relative max-h-[90vh] flex flex-col overflow-hidden"
+                className="my-8 bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 relative max-h-[90vh] flex flex-col overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
               <button
@@ -108,58 +108,69 @@ export const NewsModal: React.FC<NewsModalProps> = ({
                 ref={scrollContainerRef}
                 className="flex-1 min-h-0 overflow-y-auto overscroll-contain no-scrollbar"
               >
-                <div className={hasImage ? 'bg-offwhite border-b border-slate-200/70' : 'bg-forest'}>
-                  <SafeImage
-                    src={item.image}
-                    alt={item.title}
+                <div className="max-w-3xl mx-auto p-5 sm:p-8 space-y-6">
+                  <div
                     className={
                       hasImage
-                        ? 'w-full h-auto max-h-[45vh] sm:max-h-[50vh] object-contain mx-auto'
-                        : 'w-full h-44 sm:h-52'
+                        ? 'rounded-xl overflow-hidden bg-offwhite border border-slate-200/70'
+                        : 'rounded-xl overflow-hidden bg-forest'
                     }
-                  />
-                </div>
-
-                <div className="p-6 sm:p-8 space-y-4">
-                  <div className="flex items-center gap-3 text-xs pr-8">
-                    <span className="px-2.5 py-1 rounded-full bg-gold-50 text-gold-dark font-semibold border border-gold/30">
-                      {item.category}
-                    </span>
-                    <span className="text-slate-400 font-medium">{item.date}</span>
-                  </div>
-                  <h3
-                    id="news-modal-title"
-                    className="font-heading font-extrabold text-xl sm:text-2xl text-forest leading-snug"
                   >
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
-                    {item.fullText}
-                  </p>
+                    <SafeImage
+                      src={item.image}
+                      alt={item.title}
+                      className={
+                        hasImage
+                          ? 'w-full h-auto max-h-[45vh] sm:max-h-[50vh] object-contain mx-auto'
+                          : 'w-full h-44 sm:h-52'
+                      }
+                    />
+                  </div>
 
-                  {files.length > 0 && (
-                    <div className="pt-4 border-t border-slate-200/80 space-y-3">
-                      <div className="text-xs font-bold uppercase tracking-wider text-forest">
-                        Прикріплені документи
+                  <div className="space-y-4">
+                    <div className="text-center space-y-2.5">
+                      <div className="flex flex-wrap items-center justify-center gap-3 text-xs">
+                        <span className="px-2.5 py-1 rounded-full bg-gold-50 text-gold-dark font-semibold border border-gold/30 uppercase tracking-wider">
+                          {item.category}
+                        </span>
+                        <span className="text-slate-400 font-medium">{item.date}</span>
                       </div>
-                      <div className="flex flex-wrap gap-2.5">
-                        {files.map((fileUrl, index) => (
-                          <a
-                            key={`${fileUrl}-${index}`}
-                            href={fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-forest hover:bg-forest-light text-white text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm"
-                          >
-                            <FileText className="w-4 h-4 text-gold shrink-0" />
-                            <span>
-                              {files.length === 1 ? 'Переглянути документ' : `Документ ${index + 1}`}
-                            </span>
-                          </a>
-                        ))}
-                      </div>
+                      <h3
+                        id="news-modal-title"
+                        className="font-heading font-extrabold text-xl sm:text-2xl text-forest leading-snug text-center"
+                      >
+                        {item.title}
+                      </h3>
                     </div>
-                  )}
+
+                    <p className="w-full text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line text-left md:text-justify">
+                      {item.fullText}
+                    </p>
+
+                    {files.length > 0 && (
+                      <div className="pt-4 border-t border-slate-200/80 space-y-3 text-left">
+                        <div className="text-xs font-bold uppercase tracking-wider text-forest">
+                          Прикріплені документи
+                        </div>
+                        <div className="flex flex-wrap gap-2.5">
+                          {files.map((fileUrl, index) => (
+                            <a
+                              key={`${fileUrl}-${index}`}
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-forest hover:bg-forest-light text-white text-sm font-semibold transition-all duration-300 active:scale-95 shadow-sm"
+                            >
+                              <FileText className="w-4 h-4 text-gold shrink-0" />
+                              <span>
+                                {files.length === 1 ? 'Переглянути документ' : `Документ ${index + 1}`}
+                              </span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

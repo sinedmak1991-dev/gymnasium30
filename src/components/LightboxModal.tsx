@@ -82,10 +82,10 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          <div className="h-full w-full overflow-y-auto overscroll-contain">
+          <div className="h-full w-full overflow-y-auto overscroll-contain no-scrollbar">
             <div className="min-h-full flex items-center justify-center px-14 sm:px-20 py-4">
               <div
-                className="my-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto overscroll-contain flex flex-col items-center"
+                className="my-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto overscroll-contain no-scrollbar flex flex-col items-center"
                 onClick={(e) => e.stopPropagation()}
               >
                 <AnimatePresence mode="wait">

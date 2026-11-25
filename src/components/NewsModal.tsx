@@ -85,7 +85,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
             </button>
           )}
 
-          <div className="h-full w-full overflow-y-auto overscroll-contain">
+          <div className="h-full w-full overflow-y-auto overscroll-contain no-scrollbar">
             <div className="min-h-full flex items-center justify-center p-4 sm:px-16 lg:px-20">
               <motion.div
                 initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
@@ -106,7 +106,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
 
               <div
                 ref={scrollContainerRef}
-                className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
+                className="flex-1 min-h-0 overflow-y-auto overscroll-contain no-scrollbar"
               >
                 <div className={hasImage ? 'bg-offwhite border-b border-slate-200/70' : 'bg-forest'}>
                   <SafeImage

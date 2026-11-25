@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   BookOpenCheck,
@@ -86,7 +86,7 @@ const PARENT_TABS: {
   {
     id: 'trustbox',
     title: 'Е-скринька довіри',
-    subtitle: 'Анонімно про булінг',
+    subtitle: 'Конфіденційні звернення',
     icon: HeartHandshake,
   },
 ];
@@ -98,14 +98,69 @@ const BELL_FILTERS: { id: BellGroupId; label: string }[] = [
   { id: 'grade5_9', label: '5–9-ті класи (45 хв)' },
 ];
 
+function isTrustBoxUrlTarget(): boolean {
+  if (typeof window === 'undefined') return false;
+  const hash = window.location.hash.replace(/^#/, '').toLowerCase();
+  const tabParam = new URLSearchParams(window.location.search).get('tab')?.toLowerCase();
+  return (
+    hash === 'trust-box' ||
+    hash === 'trustbox' ||
+    tabParam === 'trust-box' ||
+    tabParam === 'trustbox'
+  );
+}
+
 export const ParentsSection: React.FC<ParentsSectionProps> = ({
   onOpenContact,
   sobInspector = DEFAULT_SOB_INSPECTOR,
 }) => {
-  const [activeTab, setActiveTab] = useState<ParentTabId>('bells');
+  const [activeTab, setActiveTab] = useState<ParentTabId>(() =>
+    isTrustBoxUrlTarget() ? 'trustbox' : 'bells'
+  );
   const [selectedBellGroup, setSelectedBellGroup] = useState<BellGroupId>('all');
   const [sobPhotoOpen, setSobPhotoOpen] = useState(false);
+  const tabContentRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    let scrollTimer: number | null = null;
+
+    const activateAndScrollToTrustBox = () => {
+      if (!isTrustBoxUrlTarget()) return;
+      setActiveTab('trustbox');
+
+      if (scrollTimer !== null) {
+        window.clearTimeout(scrollTimer);
+      }
+
+      scrollTimer = window.setTimeout(() => {
+        tabContentRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      }, 180);
+    };
+
+    activateAndScrollToTrustBox();
+
+    window.addEventListener('hashchange', activateAndScrollToTrustBox);
+    return () => {
+      window.removeEventListener('hashchange', activateAndScrollToTrustBox);
+      if (scrollTimer !== null) {
+        window.clearTimeout(scrollTimer);
+      }
+    };
+  }, [prefersReducedMotion]);
+
+  const handleTabSelect = (tabId: ParentTabId) => {
+    setActiveTab(tabId);
+
+    if (tabId === 'trustbox') {
+      window.history.replaceState(null, '', `${window.location.pathname}#trust-box`);
+    } else if (window.location.hash.toLowerCase() === '#trust-box') {
+      window.history.replaceState(null, '', `${window.location.pathname}#parents`);
+    }
+  };
 
   useEffect(() => {
     if (!sobPhotoOpen) return;
@@ -154,7 +209,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                   type="button"
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabSelect(tab.id)}
                   className={`flex items-center gap-3 p-4 rounded-2xl border text-left transition-all duration-300 active:scale-95 cursor-pointer ${
                     isActive
                       ? 'bg-forest text-white border-forest shadow-md'
@@ -187,7 +242,8 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
         </Reveal>
 
         {/* Контент вкладок */}
-        <Reveal delay={0.12} className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
+        <div id="trust-box" ref={tabContentRef} className="scroll-mt-24">
+          <Reveal delay={0.12} className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -822,7 +878,8 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
           {activeTab === 'trustbox' && <TrustBoxPanel />}
             </motion.div>
           </AnimatePresence>
-        </Reveal>
+          </Reveal>
+        </div>
       </div>
 
       {/* Модальне вікно повного перегляду фото інспектора СОБ */}

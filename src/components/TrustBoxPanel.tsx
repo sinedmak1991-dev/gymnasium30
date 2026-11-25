@@ -79,12 +79,12 @@ export const TrustBoxPanel: React.FC = () => {
         <div className="lg:col-span-5 space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-50 border border-forest/15 text-forest text-xs font-bold uppercase tracking-wider">
             <HeartHandshake className="w-3.5 h-3.5 text-gold-dark shrink-0" />
-            <span>Протидія булінгу та підтримка</span>
+            <span>Безпечний простір та підтримка</span>
           </div>
 
           <div>
             <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-forest">
-              Е-скринька довіри (Протидія булінгу)
+              Е-скринька довіри
             </h3>
             <p className="text-sm sm:text-base text-slate-600 mt-2.5 leading-relaxed">
               Тут ви можете конфіденційно або повністю анонімно повідомити про випадки булінгу,

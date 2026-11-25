@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { BookOpenCheck, Menu, X } from 'lucide-react';
+import { BookOpenCheck, Menu, Search, X } from 'lucide-react';
 import { SCHOOL_INFO } from '../data/schoolData';
 import { CrestLogo } from './CrestLogo';
 import { GENTLE_EASE } from './Reveal';
+
+interface HeaderProps {
+  onOpenSearch: () => void;
+}
 
 const NAV_ITEMS = [
   { href: '#home', label: 'Головна', mobileLabel: 'Головна' },
@@ -19,7 +23,7 @@ const NAV_ITEMS = [
   },
 ];
 
-export const Header: React.FC = () => {
+export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollTimerRef = useRef<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -147,7 +151,7 @@ export const Header: React.FC = () => {
             </a>
 
             {/* Десктопне меню */}
-            <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 text-[13px] xl:text-sm font-medium text-slate-700">
+            <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 text-[13px] xl:text-sm font-medium text-slate-700">
               {NAV_ITEMS.map((item) => (
                 <a
                   key={item.href}
@@ -165,18 +169,48 @@ export const Header: React.FC = () => {
                   {item.accentDot && <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />}
                 </a>
               ))}
+
+              <button
+                type="button"
+                onClick={onOpenSearch}
+                title="Пошук по сайту (Ctrl+K)"
+                aria-label="Пошук по сайту"
+                className="inline-flex items-center gap-2 px-2.5 xl:px-3 py-1.5 rounded-xl bg-offwhite hover:bg-forest-50 text-forest border border-slate-200/90 hover:border-forest/35 transition-all duration-200 active:scale-95 cursor-pointer shrink-0"
+              >
+                <Search className="w-4 h-4 text-forest shrink-0" />
+                <span className="hidden xl:inline text-xs font-semibold text-slate-600">
+                  Пошук
+                </span>
+                <kbd className="hidden 2xl:inline-flex items-center px-1.5 py-0.5 text-[10px] font-sans font-semibold text-slate-500 bg-white border border-slate-200 rounded">
+                  Ctrl+K
+                </kbd>
+              </button>
             </nav>
 
-            {/* Кнопка мобільного меню */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="lg:hidden p-2.5 rounded-xl text-forest hover:bg-forest-50 focus:outline-none transition-all duration-300 active:scale-95 cursor-pointer"
-              aria-label={mobileMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {/* Кнопки мобільної панелі: пошук + меню */}
+            <div className="flex lg:hidden items-center gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  closeMenu();
+                  onOpenSearch();
+                }}
+                title="Пошук по сайту"
+                aria-label="Пошук по сайту"
+                className="p-2.5 rounded-xl text-forest hover:bg-forest-50 focus:outline-none transition-all duration-300 active:scale-95 cursor-pointer"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                className="p-2.5 rounded-xl text-forest hover:bg-forest-50 focus:outline-none transition-all duration-300 active:scale-95 cursor-pointer"
+                aria-label={mobileMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -213,6 +247,17 @@ export const Header: React.FC = () => {
                 >
                   Контакти
                 </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    onOpenSearch();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-offwhite hover:bg-forest-50 text-forest border border-slate-200/80 font-semibold transition-all duration-200 active:scale-[0.99] cursor-pointer"
+                >
+                  <Search className="w-4 h-4 text-gold-dark shrink-0" />
+                  <span>Пошук по сайту</span>
+                </button>
                 <a
                   href={SCHOOL_INFO.diaryUrl}
                   target="_blank"

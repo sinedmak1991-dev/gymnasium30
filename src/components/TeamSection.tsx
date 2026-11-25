@@ -7,6 +7,7 @@ import { GENTLE_EASE, Reveal } from './Reveal';
 interface TeamSectionProps {
   members: TeamMember[];
   isLoading?: boolean;
+  highlightedMemberRequest?: { memberId: number; nonce: number } | null;
 }
 
 const INITIAL_VISIBLE_MEMBERS = 6;
@@ -78,9 +79,14 @@ const TeamPortraitHeader: React.FC<{
   );
 };
 
-export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = false }) => {
+export const TeamSection: React.FC<TeamSectionProps> = ({
+  members,
+  isLoading = false,
+  highlightedMemberRequest = null,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<TeamCategory>('all');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [highlightedMemberId, setHighlightedMemberId] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [previewPhoto, setPreviewPhoto] = useState<{
@@ -88,6 +94,42 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
     name: string;
     role: string;
   } | null>(null);
+
+  useEffect(() => {
+    if (!highlightedMemberRequest) return;
+    const { memberId } = highlightedMemberRequest;
+
+    setSelectedCategory('all');
+    const memberIndex = members.findIndex((m) => m.id === memberId);
+    if (memberIndex >= INITIAL_VISIBLE_MEMBERS) {
+      setIsExpanded(true);
+    }
+    setHighlightedMemberId(memberId);
+
+    const scrollTimer = window.setTimeout(() => {
+      const card = document.getElementById(`team-member-${memberId}`);
+      if (card) {
+        card.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'center',
+        });
+      } else {
+        sectionRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      }
+    }, 160);
+
+    const clearHighlightTimer = window.setTimeout(() => {
+      setHighlightedMemberId((prev) => (prev === memberId ? null : prev));
+    }, 2600);
+
+    return () => {
+      window.clearTimeout(scrollTimer);
+      window.clearTimeout(clearHighlightTimer);
+    };
+  }, [highlightedMemberRequest, members, prefersReducedMotion]);
 
   useEffect(() => {
     if (!previewPhoto) return;
@@ -209,7 +251,10 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ members, isLoading = f
                 className="h-full"
               >
                 <article
-                  className={`h-full rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 flex flex-col ${
+                  id={`team-member-${member.id}`}
+                  className={`h-full rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 flex flex-col scroll-mt-24 ${
+                    highlightedMemberId === member.id ? 'ring-2 ring-gold ring-offset-2 shadow-xl' : ''
+                  } ${
                     member.featured
                       ? 'bg-forest text-white border-forest shadow-lg hover:shadow-2xl'
                       : 'bg-offwhite text-slate-800 border-slate-200/90 hover:border-forest/40 hover:shadow-lg'

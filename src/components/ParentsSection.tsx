@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   BookOpenCheck,
+  ChevronDown,
   Clock,
   ExternalLink,
   Globe,
@@ -27,6 +28,7 @@ import { TrustBoxPanel } from './TrustBoxPanel';
 interface ParentsSectionProps {
   onOpenContact: (subject?: string) => void;
   sobInspector?: SobInspectorInfo;
+  externalTabRequest?: { tabId: ParentTabId; nonce: number } | null;
 }
 
 const PARENT_TABS: {
@@ -98,6 +100,12 @@ const BELL_FILTERS: { id: BellGroupId; label: string }[] = [
   { id: 'grade5_9', label: '5–9-ті класи (45 хв)' },
 ];
 
+const TAB_ROWS = [
+  PARENT_TABS.slice(0, 3),
+  PARENT_TABS.slice(3, 6),
+  PARENT_TABS.slice(6, 9),
+];
+
 function isTrustBoxUrlTarget(): boolean {
   if (typeof window === 'undefined') return false;
   const hash = window.location.hash.replace(/^#/, '').toLowerCase();
@@ -113,32 +121,61 @@ function isTrustBoxUrlTarget(): boolean {
 export const ParentsSection: React.FC<ParentsSectionProps> = ({
   onOpenContact,
   sobInspector = DEFAULT_SOB_INSPECTOR,
+  externalTabRequest = null,
 }) => {
-  const [activeTab, setActiveTab] = useState<ParentTabId>(() =>
+  const [activeTab, setActiveTab] = useState<ParentTabId | null>(() =>
     isTrustBoxUrlTarget() ? 'trustbox' : 'bells'
   );
   const [selectedBellGroup, setSelectedBellGroup] = useState<BellGroupId>('all');
   const [sobPhotoOpen, setSobPhotoOpen] = useState(false);
-  const tabContentRef = useRef<HTMLDivElement>(null);
+  const [isDesktopGrid, setIsDesktopGrid] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : true
+  );
+  const buttonRefs = useRef<Partial<Record<ParentTabId, HTMLButtonElement | null>>>({});
+  const scrollTimerRef = useRef<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    let scrollTimer: number | null = null;
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsDesktopGrid(event.matches);
+    };
 
+    setIsDesktopGrid(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const scrollButtonIntoView = (tabId: ParentTabId, forceScroll = false) => {
+    if (scrollTimerRef.current !== null) {
+      window.clearTimeout(scrollTimerRef.current);
+    }
+
+    scrollTimerRef.current = window.setTimeout(() => {
+      scrollTimerRef.current = null;
+      const targetButton = buttonRefs.current[tabId];
+      if (!targetButton) return;
+
+      const rect = targetButton.getBoundingClientRect();
+      const headerOffset = 96; // 80px фіксованої шапки + 16px відступу
+      const isOutOfComfortableView =
+        rect.top < headerOffset || rect.top > window.innerHeight * 0.55;
+
+      if (forceScroll || isOutOfComfortableView) {
+        const targetY = Math.max(0, window.scrollY + rect.top - headerOffset);
+        window.scrollTo({
+          top: targetY,
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        });
+      }
+    }, 240);
+  };
+
+  useEffect(() => {
     const activateAndScrollToTrustBox = () => {
       if (!isTrustBoxUrlTarget()) return;
       setActiveTab('trustbox');
-
-      if (scrollTimer !== null) {
-        window.clearTimeout(scrollTimer);
-      }
-
-      scrollTimer = window.setTimeout(() => {
-        tabContentRef.current?.scrollIntoView({
-          behavior: prefersReducedMotion ? 'auto' : 'smooth',
-          block: 'start',
-        });
-      }, 180);
+      scrollButtonIntoView('trustbox', true);
     };
 
     activateAndScrollToTrustBox();
@@ -146,13 +183,30 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
     window.addEventListener('hashchange', activateAndScrollToTrustBox);
     return () => {
       window.removeEventListener('hashchange', activateAndScrollToTrustBox);
-      if (scrollTimer !== null) {
-        window.clearTimeout(scrollTimer);
+      if (scrollTimerRef.current !== null) {
+        window.clearTimeout(scrollTimerRef.current);
       }
     };
   }, [prefersReducedMotion]);
 
+  useEffect(() => {
+    if (!externalTabRequest) return;
+    setActiveTab(externalTabRequest.tabId);
+    if (externalTabRequest.tabId === 'trustbox') {
+      window.history.replaceState(null, '', `${window.location.pathname}#trust-box`);
+    }
+    scrollButtonIntoView(externalTabRequest.tabId, true);
+  }, [externalTabRequest]);
+
   const handleTabSelect = (tabId: ParentTabId) => {
+    if (activeTab === tabId) {
+      setActiveTab(null);
+      if (window.location.hash.toLowerCase() === '#trust-box') {
+        window.history.replaceState(null, '', `${window.location.pathname}#parents`);
+      }
+      return;
+    }
+
     setActiveTab(tabId);
 
     if (tabId === 'trustbox') {
@@ -160,6 +214,8 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
     } else if (window.location.hash.toLowerCase() === '#trust-box') {
       window.history.replaceState(null, '', `${window.location.pathname}#parents`);
     }
+
+    scrollButtonIntoView(tabId);
   };
 
   useEffect(() => {
@@ -181,78 +237,59 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
   const maxLessonsCount = Math.max(...BELL_SCHEDULE_GROUPS.map((g) => g.rows.length));
   const lessonNumbers = Array.from({ length: maxLessonsCount }, (_, index) => index + 1);
 
-  return (
-    <section id="parents" className="py-16 sm:py-20 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Reveal className="max-w-3xl mb-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">
-            Батькам та учням
-          </span>
-          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-forest mt-1">
-            Швидкий доступ до важливої інформації
-          </h2>
-          <p className="text-slate-600 mt-2">
-            Оберіть потрібний розділ, щоб переглянути актуальний розклад дзвінків, умови
-            харчування, правила безпеки або перелік документів для вступу.
-          </p>
-        </Reveal>
-
-        {/* Кнопки-таби (симетрична сітка 3x3 на десктопі, 2 колонки на планшеті, 1 колонка на смартфоні) */}
-        <Reveal delay={0.07}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8" role="tablist">
-            {PARENT_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => handleTabSelect(tab.id)}
-                  className={`flex items-center gap-3 p-4 rounded-2xl border text-left transition-all duration-300 active:scale-95 cursor-pointer ${
-                    isActive
-                      ? 'bg-forest text-white border-forest shadow-md'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-forest/40 hover:-translate-y-0.5 hover:shadow-sm'
-                  }`}
-                >
-                  <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
-                      isActive ? 'bg-gold/20 text-gold' : 'bg-forest-50 text-forest'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-heading font-bold text-sm sm:text-base leading-snug">
-                      {tab.title}
-                    </div>
-                    <div
-                      className={`text-xs mt-0.5 ${
-                        isActive ? 'text-white/80' : 'text-slate-500'
-                      }`}
-                    >
-                      {tab.subtitle}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
+  const renderTabButton = (tab: (typeof PARENT_TABS)[number]) => {
+    const Icon = tab.icon;
+    const isActive = activeTab === tab.id;
+    return (
+      <button
+        key={tab.id}
+        id={tab.id === 'trustbox' ? 'trust-box' : undefined}
+        ref={(el) => {
+          buttonRefs.current[tab.id] = el;
+        }}
+        type="button"
+        role="tab"
+        aria-selected={isActive}
+        aria-expanded={isActive}
+        aria-controls={`panel-${tab.id}`}
+        onClick={() => handleTabSelect(tab.id)}
+        className={`w-full flex items-center gap-3 p-3.5 lg:p-4 rounded-2xl border text-left transition-all duration-300 active:scale-[0.98] cursor-pointer scroll-mt-24 ${
+          isActive
+            ? 'bg-forest text-white border-forest shadow-md'
+            : 'bg-white text-slate-700 border-slate-200 hover:border-forest/40 hover:-translate-y-0.5 hover:shadow-sm'
+        }`}
+      >
+        <div
+          className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+            isActive ? 'bg-gold/20 text-gold' : 'bg-forest-50 text-forest'
+          }`}
+        >
+          <Icon className="w-5 h-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="font-heading font-bold text-sm lg:text-base leading-snug">
+            {tab.title}
           </div>
-        </Reveal>
+          <div
+            className={`text-xs mt-0.5 truncate ${
+              isActive ? 'text-white/80' : 'text-slate-500'
+            }`}
+          >
+            {tab.subtitle}
+          </div>
+        </div>
+        <ChevronDown
+          className={`w-4 h-4 shrink-0 transition-transform duration-300 ${
+            isActive ? 'rotate-180 text-gold' : 'text-slate-400'
+          }`}
+        />
+      </button>
+    );
+  };
 
-        {/* Контент вкладок */}
-        <div id="trust-box" ref={tabContentRef} className="scroll-mt-24">
-          <Reveal delay={0.12} className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
-              transition={{ duration: 0.22, ease: GENTLE_EASE }}
-            >
-          {activeTab === 'bells' && (
+  const renderTabContent = (tabId: ParentTabId) => (
+    <>
+          {tabId === 'bells' && (
             <div className="space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
@@ -432,7 +469,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'diary' && (
+          {tabId === 'diary' && (
             <div className="space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
                 <div>
@@ -485,7 +522,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'food' && (
+          {tabId === 'food' && (
             <div className="space-y-5">
               <h3 className="font-heading font-bold text-xl text-forest">
                 Організація шкільного харчування
@@ -511,7 +548,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'safety' && (
+          {tabId === 'safety' && (
             <div className="space-y-5">
               <h3 className="font-heading font-bold text-xl text-forest">
                 Безпекове середовище та порядок дій під час тривоги
@@ -553,7 +590,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'admissions' && (
+          {tabId === 'admissions' && (
             <div className="space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <h3 className="font-heading font-bold text-xl text-forest">
@@ -598,7 +635,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'language' && (
+          {tabId === 'language' && (
             <div className="space-y-5">
               <h3 className="font-heading font-bold text-xl text-forest">
                 Мова освітнього процесу — українська
@@ -621,7 +658,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
               </div>
             </div>
           )}
-          {activeTab === 'sob' && (
+          {tabId === 'sob' && (
             <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
               {/* Ліва колонка: Картка інспектора СОБ */}
               <div className="lg:col-span-5 bg-offwhite rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5">
@@ -745,7 +782,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'history' && (
+          {tabId === 'history' && (
             <div className="space-y-6">
               {/* Верхня акцентна плашка — Девіз закладу */}
               <div className="bg-forest text-white rounded-2xl p-6 sm:p-7 border border-forest shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -875,11 +912,99 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
             </div>
           )}
 
-          {activeTab === 'trustbox' && <TrustBoxPanel />}
-            </motion.div>
-          </AnimatePresence>
-          </Reveal>
-        </div>
+          {tabId === 'trustbox' && <TrustBoxPanel />}
+    </>
+  );
+
+  return (
+    <section id="parents" className="py-16 sm:py-20 scroll-mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Reveal className="max-w-3xl mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-gold-dark">
+            Батькам та учням
+          </span>
+          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-forest mt-1">
+            Швидкий доступ до важливої інформації
+          </h2>
+          <p className="text-slate-600 mt-2">
+            Оберіть потрібний розділ, щоб переглянути актуальний розклад дзвінків, умови
+            харчування, правила безпеки або перелік документів для вступу.
+          </p>
+        </Reveal>
+
+        {/* Інлайн-акордеон: на мобільних під натиснутою кнопкою, на планшетах/десктопі (>=768px) — на всю ширину під її рядом у сітці 3×3 */}
+        <Reveal delay={0.07}>
+          {isDesktopGrid ? (
+            <div className="space-y-4">
+              {TAB_ROWS.map((row, rowIndex) => {
+                const rowActiveTab = row.find((tab) => tab.id === activeTab) ?? null;
+                return (
+                  <div key={rowIndex} className="grid grid-cols-3 gap-3 sm:gap-4" role="tablist">
+                    {row.map((tab) => renderTabButton(tab))}
+
+                    <AnimatePresence initial={false}>
+                      {rowActiveTab && (
+                        <motion.div
+                          key={`desktop-row-panel-${rowIndex}`}
+                          id={`panel-${rowActiveTab.id}`}
+                          role="tabpanel"
+                          initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                          transition={{ duration: 0.28, ease: GENTLE_EASE }}
+                          className="col-span-full overflow-hidden"
+                        >
+                          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
+                            <AnimatePresence mode="wait" initial={false}>
+                              <motion.div
+                                key={rowActiveTab.id}
+                                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+                                transition={{ duration: 0.2, ease: GENTLE_EASE }}
+                              >
+                                {renderTabContent(rowActiveTab.id)}
+                              </motion.div>
+                            </AnimatePresence>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3" role="tablist">
+              {PARENT_TABS.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <div key={tab.id} className="space-y-0">
+                    {renderTabButton(tab)}
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <motion.div
+                          key={`mobile-panel-${tab.id}`}
+                          id={`panel-${tab.id}`}
+                          role="tabpanel"
+                          initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                          transition={{ duration: 0.28, ease: GENTLE_EASE }}
+                          className="overflow-hidden"
+                        >
+                          <div className="mt-3 bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm">
+                            {renderTabContent(tab.id)}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Reveal>
       </div>
 
       {/* Модальне вікно повного перегляду фото інспектора СОБ */}

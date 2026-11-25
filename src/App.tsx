@@ -10,6 +10,7 @@ import { LightboxModal } from './components/LightboxModal';
 import { NewsModal } from './components/NewsModal';
 import { NewsSection } from './components/NewsSection';
 import { ParentsSection } from './components/ParentsSection';
+import { SearchModal } from './components/SearchModal';
 import { StatsBar } from './components/StatsBar';
 import { TeamSection } from './components/TeamSection';
 import { TopBar } from './components/TopBar';
@@ -20,6 +21,7 @@ import type {
   DocumentItem,
   GalleryItem,
   NewsItem,
+  ParentTabId,
   SobInspectorInfo,
   TeamMember,
 } from './types/school';
@@ -39,6 +41,15 @@ export default function App() {
   const [selectedNewsId, setSelectedNewsId] = useState<number | null>(null);
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [parentTabRequest, setParentTabRequest] = useState<{
+    tabId: ParentTabId;
+    nonce: number;
+  } | null>(null);
+  const [teamHighlightRequest, setTeamHighlightRequest] = useState<{
+    memberId: number;
+    nonce: number;
+  } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -111,7 +122,14 @@ export default function App() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+        return;
+      }
+
       if (e.key === 'Escape') {
+        setSearchOpen(false);
         setLightboxIndex(null);
         setContactState((prev) => ({ ...prev, open: false }));
         setSelectedNewsId(null);
@@ -141,16 +159,24 @@ export default function App() {
       <div className="min-h-screen flex flex-col bg-offwhite text-slate-800 font-sans antialiased">
       <TopBar onOpenContact={openContactModal} />
 
-      <Header />
+      <Header onOpenSearch={() => setSearchOpen(true)} />
 
       <main className="flex-1">
         <HeroSection />
 
         <StatsBar />
 
-        <ParentsSection onOpenContact={openContactModal} sobInspector={sobInspector} />
+        <ParentsSection
+          onOpenContact={openContactModal}
+          sobInspector={sobInspector}
+          externalTabRequest={parentTabRequest}
+        />
 
-        <TeamSection members={team} isLoading={isSheetsLoading} />
+        <TeamSection
+          members={team}
+          isLoading={isSheetsLoading}
+          highlightedMemberRequest={teamHighlightRequest}
+        />
 
         <GallerySection
           items={gallery}
@@ -195,6 +221,21 @@ export default function App() {
       />
 
         <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />
+
+        <SearchModal
+          isOpen={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          documents={documents}
+          news={news}
+          team={team}
+          sobInspector={sobInspector}
+          onSelectDocument={(doc) => setSelectedDoc(doc)}
+          onSelectNews={(newsId) => setSelectedNewsId(newsId)}
+          onSelectTeamMember={(memberId) =>
+            setTeamHighlightRequest({ memberId, nonce: Date.now() })
+          }
+          onSelectParentTab={(tabId) => setParentTabRequest({ tabId, nonce: Date.now() })}
+        />
       </div>
     </MotionConfig>
   );

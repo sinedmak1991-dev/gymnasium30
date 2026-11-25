@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Clock, ExternalLink, FileCheck2, X } from 'lucide-react';
 import { SCHOOL_INFO } from '../data/schoolData';
@@ -14,6 +14,18 @@ export const DocModal: React.FC<DocModalProps> = ({ doc, onClose }) => {
   const prefersReducedMotion = useReducedMotion();
   const hasPdf = Boolean(doc?.pdfUrl && doc.pdfUrl.trim() !== '');
 
+  useEffect(() => {
+    if (doc) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [doc]);
+
   return (
     <AnimatePresence>
       {doc && (
@@ -22,20 +34,21 @@ export const DocModal: React.FC<DocModalProps> = ({ doc, onClose }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-slate-900/60 backdrop-blur-sm"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
           aria-labelledby="doc-modal-title"
         >
-          <motion.div
-            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
-            transition={{ duration: 0.25, ease: GENTLE_EASE }}
-            className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="min-h-full flex items-center justify-center p-4">
+            <motion.div
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.25, ease: GENTLE_EASE }}
+              className="my-8 bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto overscroll-contain p-6 sm:p-8 shadow-2xl border border-slate-200 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
             <button
               type="button"
               onClick={onClose}
@@ -101,7 +114,8 @@ export const DocModal: React.FC<DocModalProps> = ({ doc, onClose }) => {
                 </span>
               )}
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -95,6 +95,20 @@ export default function App() {
     [gallery.length]
   );
 
+  const navigateNews = useCallback(
+    (direction: 1 | -1) => {
+      if (news.length <= 1) return;
+      setSelectedNewsId((prevId) => {
+        if (prevId === null) return null;
+        const currentIndex = news.findIndex((item) => item.id === prevId);
+        if (currentIndex === -1) return null;
+        const nextIndex = (currentIndex + direction + news.length) % news.length;
+        return news[nextIndex].id;
+      });
+    },
+    [news]
+  );
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -106,12 +120,15 @@ export default function App() {
       if (lightboxIndex !== null) {
         if (e.key === 'ArrowRight') navigateLightbox(1);
         if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      } else if (selectedNewsId !== null) {
+        if (e.key === 'ArrowRight') navigateNews(1);
+        if (e.key === 'ArrowLeft') navigateNews(-1);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIndex, navigateLightbox]);
+  }, [lightboxIndex, navigateLightbox, selectedNewsId, navigateNews]);
 
   const selectedNews =
     selectedNewsId !== null ? news.find((item) => item.id === selectedNewsId) ?? null : null;
@@ -169,7 +186,13 @@ export default function App() {
         onClose={closeContactModal}
       />
 
-      <NewsModal item={selectedNews} onClose={() => setSelectedNewsId(null)} />
+      <NewsModal
+        item={selectedNews}
+        onClose={() => setSelectedNewsId(null)}
+        onPrev={() => navigateNews(-1)}
+        onNext={() => navigateNews(1)}
+        hasNavigation={news.length > 1}
+      />
 
         <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />
       </div>

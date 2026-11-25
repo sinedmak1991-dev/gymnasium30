@@ -34,6 +34,18 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   }, [isOpen, initialSubject]);
 
   useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen || !submitted) return;
     const timer = window.setTimeout(() => {
       onClose();
@@ -85,20 +97,21 @@ export const ContactModal: React.FC<ContactModalProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-slate-900/60 backdrop-blur-sm"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
           aria-labelledby="contact-modal-title"
         >
-          <motion.div
-            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
-            transition={{ duration: 0.25, ease: GENTLE_EASE }}
-            className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="min-h-full flex items-center justify-center p-4">
+            <motion.div
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.25, ease: GENTLE_EASE }}
+              className="my-8 bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto overscroll-contain p-6 sm:p-8 shadow-2xl border border-slate-200 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
             <button
               type="button"
               onClick={onClose}
@@ -209,7 +222,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             </button>
           </div>
         )}
-          </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

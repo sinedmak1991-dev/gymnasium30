@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { DEFAULT_SOB_INSPECTOR, SCHOOL_INFO } from '../data/schoolData';
 import type { ParentTabId, SobInspectorInfo } from '../types/school';
+import { AddressChecker } from './AddressChecker';
 import { CrestLogo } from './CrestLogo';
 import { LiveBellSchedule } from './LiveBellSchedule';
 import { GENTLE_EASE, Reveal } from './Reveal';
@@ -410,6 +411,9 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
                   Подати онлайн-запит на консультацію
                 </button>
               </div>
+
+              <AddressChecker />
+
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
                 Прийом заяв до 1-х класів здійснюється відповідно до Порядку зарахування,
                 відрахування та переведення учнів до державних та комунальних закладів освіти,

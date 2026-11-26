@@ -1,6 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Bell, CalendarDays, CheckCircle2, Clock, Coffee, Info } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import {
+  Bell,
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  Coffee,
+  Info,
+  MoreVertical,
+  Share,
+  X,
+} from 'lucide-react';
 import { BELL_SCHEDULE_GROUPS } from '../data/schoolData';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 import type { BellGroupId } from '../types/school';
 import {
   FIRST_LESSON_START_SECONDS,
@@ -13,6 +25,7 @@ import {
   type ConcreteBellGroupId,
   type KyivClock,
 } from '../utils/bellSchedule';
+import { GENTLE_EASE } from './Reveal';
 
 const BELL_FILTERS: { id: BellGroupId; label: string }[] = [
   { id: 'all', label: 'Зведена таблиця' },
@@ -27,6 +40,20 @@ const LESSON_NUMBERS = Array.from({ length: MAX_LESSONS_COUNT }, (_, index) => i
 export const LiveBellSchedule: React.FC = () => {
   const [selectedBellGroup, setSelectedBellGroup] = useState<BellGroupId>('all');
   const [clock, setClock] = useState<KyivClock>(() => getKyivClock());
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
+  const { isInstallable, isInstalled, platform, install } = usePWAInstall();
+  const prefersReducedMotion = useReducedMotion();
+
+  const handleInstallClick = async () => {
+    if (isInstallable) {
+      const accepted = await install();
+      if (!accepted) {
+        setShowInstallGuide(false);
+      }
+      return;
+    }
+    setShowInstallGuide((prev) => !prev);
+  };
 
   useEffect(() => {
     const updateClock = () => {
@@ -516,26 +543,140 @@ export const LiveBellSchedule: React.FC = () => {
         </span>
       </div>
 
-      {/* Перемикач між паралелями */}
-      <div className="flex flex-wrap gap-2">
-        {BELL_FILTERS.map((filter) => {
-          const isActive = selectedBellGroup === filter.id;
-          return (
+      {/* Перемикач між паралелями та кнопка додавання ярлика на смартфон */}
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap gap-2">
+            {BELL_FILTERS.map((filter) => {
+              const isActive = selectedBellGroup === filter.id;
+              return (
+                <button
+                  key={filter.id}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => setSelectedBellGroup(filter.id)}
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all duration-300 active:scale-95 cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? 'font-semibold bg-forest text-white shadow-sm'
+                      : 'font-medium bg-offwhite text-slate-700 border border-slate-200 hover:border-forest/40'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {!isInstalled && (
             <button
-              key={filter.id}
               type="button"
-              aria-pressed={isActive}
-              onClick={() => setSelectedBellGroup(filter.id)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all duration-300 active:scale-95 cursor-pointer whitespace-nowrap ${
-                isActive
-                  ? 'font-semibold bg-forest text-white shadow-sm'
-                  : 'font-medium bg-offwhite text-slate-700 border border-slate-200 hover:border-forest/40'
-              }`}
+              onClick={handleInstallClick}
+              aria-expanded={!isInstallable ? showInstallGuide : undefined}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold bg-gold-50 hover:bg-gold/25 text-forest border border-gold/60 transition-all duration-200 active:scale-95 cursor-pointer whitespace-nowrap shadow-xs"
             >
-              {filter.label}
+              <span aria-hidden="true">📲</span>
+              <span>Додати розклад на екран смартфона</span>
             </button>
-          );
-        })}
+          )}
+        </div>
+
+        <AnimatePresence initial={false}>
+          {!isInstalled && !isInstallable && showInstallGuide && (
+            <motion.div
+              key="pwa-install-guide"
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+              transition={{ duration: 0.24, ease: GENTLE_EASE }}
+              className="overflow-hidden"
+            >
+              <div className="rounded-2xl border border-gold/50 bg-gradient-to-br from-forest-50/90 via-white to-gold-50/50 p-4 sm:p-5 space-y-3.5 shadow-xs">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-heading font-bold text-sm sm:text-base text-forest">
+                      Як додати ярлик «Дзвінки 30» на головний екран
+                    </div>
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      Ярлик відкриватиме живий розклад дзвінків в один дотик як окремий застосунок.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowInstallGuide(false)}
+                    aria-label="Закрити підказку"
+                    className="w-7 h-7 rounded-lg text-slate-400 hover:text-forest hover:bg-forest-50 flex items-center justify-center transition cursor-pointer shrink-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {/* iPhone (Safari) */}
+                  <div
+                    className={`rounded-xl p-3.5 border text-xs sm:text-sm space-y-2 ${
+                      platform === 'ios'
+                        ? 'bg-white border-forest/35 ring-1 ring-forest/15'
+                        : 'bg-white/80 border-slate-200/80'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-heading font-bold text-forest">
+                        Для iPhone (Safari)
+                      </span>
+                      <Share className="w-4 h-4 text-gold-dark shrink-0" aria-hidden="true" />
+                    </div>
+                    <ol className="space-y-1.5 text-slate-700 leading-relaxed">
+                      <li>
+                        <span className="font-bold text-forest">1.</span> Натисніть кнопку{' '}
+                        <strong className="text-forest">«Поділитися»</strong> (квадрат зі стрілкою
+                        вгору внизу екрана).
+                      </li>
+                      <li>
+                        <span className="font-bold text-forest">2.</span> Оберіть{' '}
+                        <strong className="text-forest">«На Початковий екран»</strong> (Add to
+                        Home Screen).
+                      </li>
+                    </ol>
+                  </div>
+
+                  {/* Android (Chrome) */}
+                  <div
+                    className={`rounded-xl p-3.5 border text-xs sm:text-sm space-y-2 ${
+                      platform === 'android'
+                        ? 'bg-white border-forest/35 ring-1 ring-forest/15'
+                        : 'bg-white/80 border-slate-200/80'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-heading font-bold text-forest">
+                        Для Android (Chrome)
+                      </span>
+                      <MoreVertical
+                        className="w-4 h-4 text-gold-dark shrink-0"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <ol className="space-y-1.5 text-slate-700 leading-relaxed">
+                      <li>
+                        <span className="font-bold text-forest">1.</span> Натисніть меню{' '}
+                        <strong className="text-forest">«⋮»</strong> у правому верхньому кутку.
+                      </li>
+                      <li>
+                        <span className="font-bold text-forest">2.</span> Оберіть{' '}
+                        <strong className="text-forest">«Додати на головний екран»</strong>.
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-slate-500">
+                  Якщо сайт відкрито у вбудованому браузері Telegram або Viber, спершу відкрийте
+                  його у Safari чи Chrome.
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Табло статусу «Зараз» */}

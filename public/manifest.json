@@ -1,0 +1,38 @@
+{
+  "id": "/",
+  "name": "Гімназія № 30 — Розклад дзвінків",
+  "short_name": "Дзвінки 30",
+  "description": "Живий розклад дзвінків та офіційний сайт КЗЗСО «Гімназія № 30 Хмельницької міської ради».",
+  "start_url": "/?tab=bells",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#143d2b",
+  "theme_color": "#143d2b",
+  "lang": "uk",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

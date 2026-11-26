@@ -100,16 +100,25 @@ const TAB_ROWS = [
   PARENT_TABS.slice(6, 9),
 ];
 
-function isTrustBoxUrlTarget(): boolean {
-  if (typeof window === 'undefined') return false;
+function getUrlTargetTab(): ParentTabId | null {
+  if (typeof window === 'undefined') return null;
   const hash = window.location.hash.replace(/^#/, '').toLowerCase();
   const tabParam = new URLSearchParams(window.location.search).get('tab')?.toLowerCase();
-  return (
+
+  if (
     hash === 'trust-box' ||
     hash === 'trustbox' ||
     tabParam === 'trust-box' ||
     tabParam === 'trustbox'
-  );
+  ) {
+    return 'trustbox';
+  }
+
+  if (hash === 'bells' || tabParam === 'bells') {
+    return 'bells';
+  }
+
+  return null;
 }
 
 export const ParentsSection: React.FC<ParentsSectionProps> = ({
@@ -117,8 +126,8 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
   sobInspector = DEFAULT_SOB_INSPECTOR,
   externalTabRequest = null,
 }) => {
-  const [activeTab, setActiveTab] = useState<ParentTabId | null>(() =>
-    isTrustBoxUrlTarget() ? 'trustbox' : 'bells'
+  const [activeTab, setActiveTab] = useState<ParentTabId | null>(
+    () => getUrlTargetTab() ?? 'bells'
   );
   const [sobPhotoOpen, setSobPhotoOpen] = useState(false);
   const [isDesktopGrid, setIsDesktopGrid] = useState<boolean>(() =>
@@ -165,17 +174,18 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
   };
 
   useEffect(() => {
-    const activateAndScrollToTrustBox = () => {
-      if (!isTrustBoxUrlTarget()) return;
-      setActiveTab('trustbox');
-      scrollButtonIntoView('trustbox', true);
+    const activateAndScrollFromUrl = () => {
+      const targetTab = getUrlTargetTab();
+      if (!targetTab) return;
+      setActiveTab(targetTab);
+      scrollButtonIntoView(targetTab, true);
     };
 
-    activateAndScrollToTrustBox();
+    activateAndScrollFromUrl();
 
-    window.addEventListener('hashchange', activateAndScrollToTrustBox);
+    window.addEventListener('hashchange', activateAndScrollFromUrl);
     return () => {
-      window.removeEventListener('hashchange', activateAndScrollToTrustBox);
+      window.removeEventListener('hashchange', activateAndScrollFromUrl);
       if (scrollTimerRef.current !== null) {
         window.clearTimeout(scrollTimerRef.current);
       }
@@ -228,7 +238,7 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
     return (
       <button
         key={tab.id}
-        id={tab.id === 'trustbox' ? 'trust-box' : undefined}
+        id={tab.id === 'trustbox' ? 'trust-box' : tab.id === 'bells' ? 'bells' : undefined}
         ref={(el) => {
           buttonRefs.current[tab.id] = el;
         }}
